@@ -32,6 +32,12 @@
     <ClCompile Include="Source\Trace.c">
       <Filter>Engine</Filter>
     </ClCompile>
+    <ClCompile Include="Source\GameStateLevel1.c">
+      <Filter>Game\GameStates</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\GameStateLevel2.c">
+      <Filter>Game\GameStates</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\GameStateStub.h">
@@ -55,6 +61,12 @@
     </ClInclude>
     <ClInclude Include="Source\Trace.h">
       <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GameStateLevel1.h">
+      <Filter>Game\GameStates</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\GameStateLevel2.h">
+      <Filter>Game\GameStates</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -70,17 +70,28 @@ void GameStateManagerUpdate(float dt)
 
 	// Check for a game state change.
 	if (GameStateIsChanging())
-	{
+	{	
 		// Shutdown the current game state.
 		GameStateExecuteShutdown(gameState.current);
 
-		// TODO: Implement code to properly handle unloading the current game state.
+		// Code to handle restarting of state
+		if (gameState.next == GsRestart)
+		{
+			// We set our next state to be the same state.
+			gameState.next = gameState.current;
+		}
+		else
+		{
+			// Implement code to properly handle unloading the current game state.
+			GameStateExecuteUnload(gameState.current);
 
-		// Update the recorded states.
-		gameState.previous = gameState.current;
-		gameState.current = gameState.next;
+			// Update the recorded states.
+			gameState.previous = gameState.current;
+			gameState.current = gameState.next;
 
-		// TODO: Implement code to properly handle loading the new game state.
+			// Implement code to properly handle loading the new game state.
+			GameStateExecuteLoad(gameState.current);
+		}
 
 		// Initialize the new game state.
 		GameStateExecuteInit(gameState.current);

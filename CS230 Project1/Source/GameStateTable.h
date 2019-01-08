@@ -34,15 +34,15 @@ typedef enum
 	GsInvalid = -1,
 
 	/* Normal Game States: */
-	GsStub,			// This is here as a placeholder only.
-	// TODO: Add new game states here.
+	GsLevel1,
+	GsLevel2,
 
 	/* Bookkeeping States: */
 	GsNum,
 	GsLast = GsNum - 1,
 
 	/* Specify the initial game state */
-	GsInitial = GsStub,
+	GsInitial = GsLevel1,
 
 } GameStates;
 
