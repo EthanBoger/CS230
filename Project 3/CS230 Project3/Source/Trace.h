@@ -1,7 +1,7 @@
 //------------------------------------------------------------------------------
 //
-// File Name:	Stub.h
-// Author(s):	Roland Shum
+// File Name:	Trace.h
+// Author(s):	Doug Schilling (dschilling)
 // Project:		MyGame
 // Course:		CS230S19
 //
@@ -23,10 +23,6 @@ extern "C" {
 #endif
 
 //------------------------------------------------------------------------------
-// Forward References:
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
 // Public Consts:
 //------------------------------------------------------------------------------
 
@@ -42,18 +38,23 @@ extern "C" {
 // Public Functions:
 //------------------------------------------------------------------------------
 
-// Initialize the ...
-void StubInit();
+// Initialize the Tracing/Logging module.
+// - Open "trace.log" for writing in text mode.
+// - Perform error handling in the event that the file failed to open.
+void TraceInit();
 
-// Update the ...
-// Params:
-//	 dt = Change in time (in seconds) since the last game loop.
-void StubUpdate(float dt);
+// Output a message to the Tracing/Logging file.
+// - Print the given message to the file if it was opened successfully.
+// - Also print the message to the console window.
+// - Every message must be printed on its own line.
+// - There must be no blank lines between messages.
+void TraceMessage(const char * formatString, ...);
 
-// Shutdown the ...
-void StubShutdown();
+// Shutdown the Tracing/Logging module.
+// - Close the file if-and-only-if the file was opened successfully
+void TraceShutdown();
 
-//------------------------------------------------------------------------------
+/*----------------------------------------------------------------------------*/
 
 #ifdef __cplusplus
 }                       /* End of extern "C" { */

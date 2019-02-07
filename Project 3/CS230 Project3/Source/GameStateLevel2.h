@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 //
-// File Name:	Stub.h
+// File Name:	GameStateLevel2.h
 // Author(s):	Roland Shum
 // Project:		MyGame
 // Course:		CS230S19
@@ -42,18 +42,24 @@ extern "C" {
 // Public Functions:
 //------------------------------------------------------------------------------
 
-// Initialize the ...
-void StubInit();
+// Load the resources associated with the Level2 game state.
+void GameStateLevel2Load();
 
-// Update the ...
+// Initialize the memory associated with the Level2 game state.
+void GameStateLevel2Init();
+
+// Update the Level2 game state.
 // Params:
 //	 dt = Change in time (in seconds) since the last game loop.
-void StubUpdate(float dt);
+void GameStateLevel2Update(float dt);
 
-// Shutdown the ...
-void StubShutdown();
+// Shutdown any memory associated with the Level2 game state.
+void GameStateLevel2Shutdown();
 
-//------------------------------------------------------------------------------
+// Unload the resources associated with the Level2 game state.
+void GameStateLevel2Unload();
+
+/*----------------------------------------------------------------------------*/
 
 #ifdef __cplusplus
 }                       /* End of extern "C" { */

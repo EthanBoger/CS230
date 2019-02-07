@@ -1,7 +1,7 @@
 //------------------------------------------------------------------------------
 //
-// File Name:	Stub.h
-// Author(s):	Roland Shum
+// File Name:	Mesh.h
+// Author(s):	Doug Schilling (dschilling)
 // Project:		MyGame
 // Course:		CS230S19
 //
@@ -26,6 +26,10 @@ extern "C" {
 // Forward References:
 //------------------------------------------------------------------------------
 
+typedef struct AEGfxVertexList AEGfxVertexList;
+typedef struct Matrix2D Matrix2D;
+typedef struct SpriteSource SpriteSource;
+
 //------------------------------------------------------------------------------
 // Public Consts:
 //------------------------------------------------------------------------------
@@ -42,16 +46,26 @@ extern "C" {
 // Public Functions:
 //------------------------------------------------------------------------------
 
-// Initialize the ...
-void StubInit();
-
-// Update the ...
+// Create a quadrilateral mesh using the Alpha Engine.
 // Params:
-//	 dt = Change in time (in seconds) since the last game loop.
-void StubUpdate(float dt);
+//	 xHalfSize = The X half-size of the mesh.
+//	 yHalfSize = The Y half-size of the mesh.
+//   uSize = The U size of the mesh, relative to texture coordinates (0.0 .. 1.0).
+//   vSize = The V size of the mesh, relative to texture coordinates (0.0 .. 1.0).
+//	 name = A name for the mesh.  Currently used only for error messaging.
+// Returns:
+//	 If the mesh was created successfully,
+//	   then return a pointer to the created mesh,
+//	   else return NULL.
+AEGfxVertexList * MeshCreateQuad(float xHalfSize, float yHalfSize, float uSize, float vSize, const char * name);
 
-// Shutdown the ...
-void StubShutdown();
+// Render a mesh (textured or untextured) using the Alpha Engine.
+// Params:
+//	 mesh = Pointer to the mesh to be rendered.
+//	 spriteSource = Pointer to sprite source used for rendering (this may be NULL).
+//	 transform = The transformation matrix used to scale, rotate, and translate the sprite.
+//	 frameIndex = The index into a sprite sheet; used for calculating UV offsets.
+void MeshRender(AEGfxVertexList * mesh, SpriteSource * spriteSource, Matrix2D * transform, unsigned frameIndex);
 
 //------------------------------------------------------------------------------
 

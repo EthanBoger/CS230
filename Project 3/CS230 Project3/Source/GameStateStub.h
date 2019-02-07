@@ -1,7 +1,7 @@
 //------------------------------------------------------------------------------
 //
-// File Name:	Stub.h
-// Author(s):	Roland Shum
+// File Name:	GameStateStub.h
+// Author(s):	Doug Schilling (dschilling)
 // Project:		MyGame
 // Course:		CS230S19
 //
@@ -42,18 +42,24 @@ extern "C" {
 // Public Functions:
 //------------------------------------------------------------------------------
 
-// Initialize the ...
-void StubInit();
+// Load the resources associated with the Stub game state.
+void GameStateStubLoad();
 
-// Update the ...
+// Initialize the memory associated with the Stub game state.
+void GameStateStubInit();
+
+// Update the Stub game state.
 // Params:
 //	 dt = Change in time (in seconds) since the last game loop.
-void StubUpdate(float dt);
+void GameStateStubUpdate(float dt);
 
-// Shutdown the ...
-void StubShutdown();
+// Shutdown any memory associated with the Stub game state.
+void GameStateStubShutdown();
 
-//------------------------------------------------------------------------------
+// Unload the resources associated with the Stub game state.
+void GameStateStubUnload();
+
+/*----------------------------------------------------------------------------*/
 
 #ifdef __cplusplus
 }                       /* End of extern "C" { */

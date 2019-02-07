@@ -18,6 +18,7 @@
 
 // Function declartion for test case found in Vector2D_Testcase.c
 void TestVector2D(void);
+void TestMatrix2D(void);
 
 //------------------------------------------------------------------------------
 // Main Function:
@@ -30,6 +31,7 @@ int WINAPI WinMain(HINSTANCE instanceH, HINSTANCE prevInstanceH, LPSTR command_l
 
   /* Run the test case for vectors before anything. */
   TestVector2D();
+  TestMatrix2D();
 
 	// Change in time (in seconds) since the last game loop.
 	// A framerate controller is not required for this assignment.
@@ -51,6 +53,5 @@ int WINAPI WinMain(HINSTANCE instanceH, HINSTANCE prevInstanceH, LPSTR command_l
 	// Shutdown the game engine.
 	EngineShutdown();
 
-  _CrtDumpMemoryLeaks();
 	return 0;
 }

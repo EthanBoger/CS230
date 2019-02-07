@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 //
-// File Name:	Stub.h
+// File Name:	Mesh.c
 // Author(s):	Roland Shum
 // Project:		MyGame
 // Course:		CS230S19
@@ -8,23 +8,18 @@
 // Copyright © 2019 DigiPen (USA) Corporation.
 //
 //------------------------------------------------------------------------------
-
-#pragma once
-
+#include "stdafx.h"
+#include "Mesh.h"
+#include "../AE/include/AEEngine.h"
 //------------------------------------------------------------------------------
 // Include Files:
 //------------------------------------------------------------------------------
 
-//------------------------------------------------------------------------------
-
-#ifdef __cplusplus
-extern "C" {
-	/* Assume C declarations for C++ */
-#endif
 
 //------------------------------------------------------------------------------
 // Forward References:
 //------------------------------------------------------------------------------
+
 
 //------------------------------------------------------------------------------
 // Public Consts:
@@ -42,20 +37,37 @@ extern "C" {
 // Public Functions:
 //------------------------------------------------------------------------------
 
-// Initialize the ...
-void StubInit();
-
-// Update the ...
+// Create a quadrilateral mesh using the Alpha Engine.
 // Params:
-//	 dt = Change in time (in seconds) since the last game loop.
-void StubUpdate(float dt);
+//	 xHalfSize = The X half-size of the mesh.
+//	 yHalfSize = The Y half-size of the mesh.
+//   uSize = The U size of the mesh, relative to texture coordinates (0.0 .. 1.0).
+//   vSize = The V size of the mesh, relative to texture coordinates (0.0 .. 1.0).
+//	 name = A name for the mesh.  Currently used only for error messaging.
+// Returns:
+//	 If the mesh was created successfully,
+//	   then return a pointer to the created mesh,
+//	   else return NULL.
+AEGfxVertexList * MeshCreateQuad(float xHalfSize, float yHalfSize, float uSize, float vSize, const char * name)
+{
+  AEGfxVertexList *result;
 
-// Shutdown the ...
-void StubShutdown();
+  AEGfxMeshStart();
+  AEGfxTriAdd(
+    -xHalfSize, -yHalfSize, 0xFFFFFFFF, 0.0f, vSize,
+    xHalfSize, -yHalfSize, 0xFFFFFFFF, uSize, vSize,
+    -xHalfSize, yHalfSize, 0xFFFFFFFF, 0.0f, 0.0f);
 
-//------------------------------------------------------------------------------
+  AEGfxTriAdd(
+    xHalfSize, -yHalfSize, 0xFFFFFFFF, uSize, vSize,
+    xHalfSize, yHalfSize, 0xFFFFFFFF, uSize, 0.0f,
+    -xHalfSize, yHalfSize, 0xFFFFFFFF, 0.0f, 0.0f);
 
-#ifdef __cplusplus
-}                       /* End of extern "C" { */
-#endif
+  result = AEGfxMeshEnd();
+  /* Error checking */
+  AE_ASSERT_MESG(result, "Failed to create mesh %s!", name);
+
+  return result;
+}
+
 

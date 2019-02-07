@@ -1,7 +1,7 @@
 //------------------------------------------------------------------------------
 //
-// File Name:	Stub.h
-// Author(s):	Roland Shum
+// File Name:	System.h
+// Author(s):	Doug Schilling (dschilling)
 // Project:		MyGame
 // Course:		CS230S19
 //
@@ -15,16 +15,14 @@
 // Include Files:
 //------------------------------------------------------------------------------
 
+#include <Windows.h>
+
 //------------------------------------------------------------------------------
 
 #ifdef __cplusplus
 extern "C" {
 	/* Assume C declarations for C++ */
 #endif
-
-//------------------------------------------------------------------------------
-// Forward References:
-//------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 // Public Consts:
@@ -42,18 +40,24 @@ extern "C" {
 // Public Functions:
 //------------------------------------------------------------------------------
 
-// Initialize the ...
-void StubInit();
+// Store the Windows settings passed in WinMain.
+void SystemStoreWindowSettings(HINSTANCE instanceH, int show);
 
-// Update the ...
+// Initialize the System (Windows, Event Handlers).
+void SystemInit();
+
+// Update the System (Windows, Event Handlers).
 // Params:
 //	 dt = Change in time (in seconds) since the last game loop.
-void StubUpdate(float dt);
+void SystemUpdate(float dt);
 
-// Shutdown the ...
-void StubShutdown();
+// Complete the draw process for the current game loop.
+void SystemDraw();
 
-//------------------------------------------------------------------------------
+// Shutdown the System (Windows, Event Handlers).
+void SystemShutdown();
+
+/*----------------------------------------------------------------------------*/
 
 #ifdef __cplusplus
 }                       /* End of extern "C" { */

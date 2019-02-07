@@ -1,7 +1,7 @@
 //------------------------------------------------------------------------------
 //
-// File Name:	Stub.h
-// Author(s):	Roland Shum
+// File Name:	GameStateStub.c
+// Author(s):	Doug Schilling (dschilling)
 // Project:		MyGame
 // Course:		CS230S19
 //
@@ -9,29 +9,17 @@
 //
 //------------------------------------------------------------------------------
 
-#pragma once
+#include "stdafx.h"
+#include "GameStateManager.h"
+#include "GameStateStub.h"
+#include "Trace.h"
 
 //------------------------------------------------------------------------------
-// Include Files:
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-
-#ifdef __cplusplus
-extern "C" {
-	/* Assume C declarations for C++ */
-#endif
-
-//------------------------------------------------------------------------------
-// Forward References:
+// Private Consts:
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
-// Public Consts:
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
-// Public Structures:
+// Private Structures:
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -39,23 +27,55 @@ extern "C" {
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
+// Private Variables:
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
+// Private Function Declarations:
+//------------------------------------------------------------------------------
+
+//------------------------------------------------------------------------------
 // Public Functions:
 //------------------------------------------------------------------------------
 
-// Initialize the ...
-void StubInit();
+// Load the resources associated with the Stub game state.
+void GameStateStubLoad()
+{
+}
 
-// Update the ...
+// Initialize the memory associated with the Stub game state.
+void GameStateStubInit()
+{
+}
+
+// Update the Stub game state.
 // Params:
 //	 dt = Change in time (in seconds) since the last game loop.
-void StubUpdate(float dt);
+void GameStateStubUpdate(float dt)
+{
+	/* Tell the compiler that the 'dt' variable is unused. */
+	UNREFERENCED_PARAMETER(dt);
 
-// Shutdown the ...
-void StubShutdown();
+	//GameStateManagerSetNextState(GsQuit);
+}
+
+// Free any memory associated with the Stub game state.
+void GameStateStubShutdown()
+{
+	// Free all objects.
+}
+
+// Unload the resources associated with the Stub game state.
+void GameStateStubUnload()
+{
+	// Free all sprite sources.
+
+	// Unload all textures.
+
+	// Free all meshes.
+}
 
 //------------------------------------------------------------------------------
-
-#ifdef __cplusplus
-}                       /* End of extern "C" { */
-#endif
+// Private Functions:
+//------------------------------------------------------------------------------
 

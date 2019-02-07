@@ -1,7 +1,7 @@
 //------------------------------------------------------------------------------
 //
-// File Name:	Stub.h
-// Author(s):	Roland Shum
+// File Name:	Engine.h
+// Author(s):	Doug Schilling (dschilling)
 // Project:		MyGame
 // Course:		CS230S19
 //
@@ -23,10 +23,6 @@ extern "C" {
 #endif
 
 //------------------------------------------------------------------------------
-// Forward References:
-//------------------------------------------------------------------------------
-
-//------------------------------------------------------------------------------
 // Public Consts:
 //------------------------------------------------------------------------------
 
@@ -42,18 +38,18 @@ extern "C" {
 // Public Functions:
 //------------------------------------------------------------------------------
 
-// Initialize the ...
-void StubInit();
+// Initialize the game engine.
+void EngineInit();
 
-// Update the ...
+// Update the game engine.
 // Params:
 //	 dt = Change in time (in seconds) since the last game loop.
-void StubUpdate(float dt);
+void EngineUpdate(float dt);
 
-// Shutdown the ...
-void StubShutdown();
+// Shutdown the game engine.
+void EngineShutdown();
 
-//------------------------------------------------------------------------------
+/*----------------------------------------------------------------------------*/
 
 #ifdef __cplusplus
 }                       /* End of extern "C" { */

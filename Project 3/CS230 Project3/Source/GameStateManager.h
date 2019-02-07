@@ -1,7 +1,7 @@
 //------------------------------------------------------------------------------
 //
-// File Name:	Stub.h
-// Author(s):	Roland Shum
+// File Name:	GameStateManager.h
+// Author(s):	Doug Schilling (dschilling)
 // Project:		MyGame
 // Course:		CS230S19
 //
@@ -15,16 +15,14 @@
 // Include Files:
 //------------------------------------------------------------------------------
 
+#include "GameStateTable.h"
+
 //------------------------------------------------------------------------------
 
 #ifdef __cplusplus
 extern "C" {
 	/* Assume C declarations for C++ */
 #endif
-
-//------------------------------------------------------------------------------
-// Forward References:
-//------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 // Public Consts:
@@ -42,16 +40,23 @@ extern "C" {
 // Public Functions:
 //------------------------------------------------------------------------------
 
-// Initialize the ...
-void StubInit();
+// Initialize the game state manager.
+void GameStateManagerInit();
 
-// Update the ...
-// Params:
-//	 dt = Change in time (in seconds) since the last game loop.
-void StubUpdate(float dt);
+// Update the game state manager.
+void GameStateManagerUpdate(float dt);
 
-// Shutdown the ...
-void StubShutdown();
+// Shutdown the game state manager.
+void GameStateManagerShutdown();
+
+// Determine if the current game state is being restarted.
+bool GameStateManagerIsRestarting();
+
+// Determine if the game is still running.
+bool GameStateManagerIsRunning();
+
+// Set the next game state to run.
+void GameStateManagerSetNextState(GameStates nextState);
 
 //------------------------------------------------------------------------------
 
