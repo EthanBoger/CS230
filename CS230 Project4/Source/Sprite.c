@@ -92,6 +92,30 @@ SpritePtr SpriteCreate(const char * name)
   return result;
 }
 
+// Dynamically allocate a clone of an existing sprite.
+// (Hint: Perform a shallow copy of the member variables.)
+// Params:
+//	 other = Pointer to the component to be cloned.
+// Returns:
+//	 If 'other' is valid and the memory allocation was successful,
+//	   then return a pointer to the cloned component,
+//	   else return NULL.
+SpritePtr SpriteClone(const SpritePtr other)
+{
+  if (other == NULL)
+    return NULL;
+
+  SpritePtr result = malloc(sizeof(Sprite));
+
+  if (result == NULL)
+    return NULL;
+
+  // shallow copy
+  *result = *other;
+
+  return result;
+}
+
 // Free the memory associated with a sprite object.
 // (Also, set the sprite pointer to NULL.)
 // Params:

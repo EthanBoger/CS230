@@ -98,6 +98,33 @@ TransformPtr TransformCreate(float x, float y)
   return newTransform;
 }
 
+// Dynamically allocate a clone of an existing transform.
+// (Hint: Make sure to perform a shallow copy or deep copy, as appropriate.)
+// Params:
+//	 other = Pointer to the component to be cloned.
+// Returns:
+//	 If 'other' is valid and the memory allocation was successful,
+//	   then return a pointer to the cloned component,
+//	   else return NULL.
+TransformPtr TransformClone(const TransformPtr other)
+{
+  if (other == NULL)
+    return NULL;
+
+  /* Malloc new transform. */
+  TransformPtr newTransform = malloc(sizeof(Transform));
+
+  /* Check for failure. */
+  if (newTransform == NULL)
+  {
+    return NULL;
+  }
+  // Shallow copy
+  *newTransform = *other;
+
+  return newTransform;
+}
+
 // Free the memory associated with a transform object.
 // (Also, set the transform pointer to NULL.)
 // Params:
@@ -134,7 +161,7 @@ Matrix2D * TransformGetMatrix(const TransformPtr transform)
     Matrix2DRotRad(&rotate, transform->rotation);
 
     Matrix2D result;
-    Matrix2DConcat(&result, &scale, &rotate);
+    Matrix2DConcat(&result, &rotate, &scale);
     
     Matrix2DConcat(&transform->matrix, &translate, &result);
 

@@ -93,6 +93,10 @@ void GameStateLevel2Update(float dt)
   {
     GameStateManagerSetNextState(GsRestart);
   }
+  if (AEInputCheckTriggered('3'))
+  {
+    GameStateManagerSetNextState(GsAsteroids);
+  }
 }
 
 // Shutdown any memory associated with the Level2 game state.

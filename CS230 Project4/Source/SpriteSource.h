@@ -1,7 +1,7 @@
 //------------------------------------------------------------------------------
 //
-// File Name:	SpriteSource.c
-// Author(s):	Roland Shum
+// File Name:	SpriteSource.h
+// Author(s):	Doug Schilling (dschilling)
 // Project:		MyGame
 // Course:		CS230S19
 //
@@ -10,25 +10,39 @@
 //------------------------------------------------------------------------------
 
 #pragma once
-#include "stdafx.h"
-#include "SpriteSource.h"
 
 //------------------------------------------------------------------------------
 // Include Files:
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
+
+#ifdef __cplusplus
+extern "C" {
+	/* Assume C declarations for C++ */
+#endif
+
+//------------------------------------------------------------------------------
 // Forward References:
 //------------------------------------------------------------------------------
 
+typedef struct AEGfxTexture AEGfxTexture;
+typedef struct AEGfxTexture *AEGfxTexturePtr;
+
+// Pointer to a SpriteSource structure.
+typedef struct SpriteSource SpriteSource;
+typedef struct SpriteSource * SpriteSourcePtr;
+
 //------------------------------------------------------------------------------
-// Public Consts:
+// Public Constants:
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 // Public Structures:
 //------------------------------------------------------------------------------
 
+// An example of the structure to be defined in SpriteSource.c.
+#if 0
 // You are free to change the contents of this structure as long as you do not
 //   change the public interface declared in the header.
 typedef struct SpriteSource
@@ -41,6 +55,7 @@ typedef struct SpriteSource
 	AEGfxTexturePtr	pTexture;
 
 } SpriteSource;
+#endif
 
 //------------------------------------------------------------------------------
 // Public Variables:
@@ -60,33 +75,13 @@ typedef struct SpriteSource
 //	 If the memory allocation was successful,
 //	   then return a pointer to the allocated memory,
 //	   else return NULL.
-SpriteSourcePtr SpriteSourceCreate(int numCols, int numRows, AEGfxTexturePtr pTexture)
-{
-  SpriteSourcePtr result = malloc(sizeof(SpriteSource));
-  
-  /* Error checking */
-  if (result == NULL)
-    return NULL;
-
-  /* Set the values. */
-  result->numCols = numCols;
-  result->numRows = numRows;
-  result->pTexture = pTexture;
-
-  return result;
-}
+SpriteSourcePtr SpriteSourceCreate(int numCols, int numRows, AEGfxTexturePtr pTexture);
 
 // Free the memory associated with a sprite source object.
 // (Also, set the sprite source pointer to NULL.)
 // Params:
 //	 spriteSource = Pointer to the sprite source pointer.
-void SpriteSourceFree(SpriteSourcePtr * spriteSource)
-{
-  if (spriteSource == NULL)
-    return;
-  free(*spriteSource);
-  *spriteSource = NULL;
-}
+void SpriteSourceFree(SpriteSourcePtr * spriteSource);
 
 // Returns a pointer to the texture, for the purposes of rendering a sprite.
 // Params:
@@ -95,13 +90,7 @@ void SpriteSourceFree(SpriteSourcePtr * spriteSource)
 //	 If the sprite source pointer is valid,
 //		then return a pointer to its texture,
 //		else return NULL.
-AEGfxTexturePtr SpriteSourceGetTexture(SpriteSourcePtr spriteSource)
-{
-  if (spriteSource != NULL)
-    return spriteSource->pTexture;
-  else
-    return NULL;
-}
+AEGfxTexturePtr SpriteSourceGetTexture(SpriteSourcePtr spriteSource);
 
 // Returns the maximum number of frames possible, given the dimensions of the sprite sheet.
 // (Hint: Frame count = numCols * numRows.)
@@ -111,28 +100,20 @@ AEGfxTexturePtr SpriteSourceGetTexture(SpriteSourcePtr spriteSource)
 //	 If the sprite source pointer is valid,
 //		then return the calculated frame count,
 //		else return 0.
-unsigned int SpriteSourceGetFrameCount(SpriteSourcePtr spriteSource)
-{
-  if (spriteSource != NULL)
-    return spriteSource->numCols * spriteSource->numRows;
-  else
-    return 0;
-}
+unsigned int SpriteSourceGetFrameCount(SpriteSourcePtr spriteSource);
 
 // Returns the UV coordinates of the specified frame in a sprite sheet.
 // (Hint: Refer to the Week 2 lecture slides for the correct calculations.)
 // Params:
 //	 spriteSource = Pointer to the sprite source object.
 //	 frameIndex = A frame index within a sprite sheet.
-//   u = Pointer to a f32 to contain the U coordinate. 
-//   v = Pointer to a f32 to contain the V coordinate. 
-void SpriteSourceGetUV(SpriteSourcePtr spriteSource, unsigned int frameIndex, float * u, float * v)
-{
-  if (spriteSource != NULL)
-  {
-    /* Formula from slides. */
-    *u = (1.f / spriteSource->numCols) * (frameIndex % spriteSource->numCols);
-    *v = (1.f / spriteSource->numRows) * (frameIndex / spriteSource->numCols);
-  }
-}
+//   u = Pointer to a float to contain the U coordinate. 
+//   v = Pointer to a float to contain the V coordinate. 
+void SpriteSourceGetUV(SpriteSourcePtr spriteSource, unsigned int frameIndex, float * u, float * v);
+
+/*----------------------------------------------------------------------------*/
+
+#ifdef __cplusplus
+}                       /* End of extern "C" { */
+#endif
 

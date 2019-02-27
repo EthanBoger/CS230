@@ -36,6 +36,12 @@ typedef struct GameObject
 	// The name of the game object.
 	const char * name;
 
+  // Flag to indicate that the game object is dead and should be destroyed.
+  bool isDestroyed;
+
+  // Pointer to an attached behavior component.
+  BehaviorPtr behavior;
+
 	// Pointer to an attached physics component.
 	PhysicsPtr physics;
 
@@ -76,6 +82,69 @@ GameObjectPtr GameObjectCreate(const char * name)
   /* Set the name. */
   result->name = name;
   return result;
+}
+
+// Dynamically allocate a clone of an existing game object.
+// (Hint: Make sure to perform a shallow copy or deep copy, as appropriate.)
+// (WARNING: When you clone the behavior component you need to change the 'parent' variable.)
+// Params:
+//	 other = Pointer to the game object to be cloned.
+// Returns:
+//	 If 'other' is valid and the memory allocation was successful,
+//	   then return a pointer to the cloned object,
+//	   else return NULL.
+GameObjectPtr GameObjectClone(const GameObjectPtr other)
+{
+  if (other == NULL)
+    return NULL;
+
+  GameObjectPtr result = calloc(1, sizeof(GameObject));
+  /* Check for successful memory allocation. */
+  if (result == NULL)
+    return NULL;
+
+  // Clone the gameobject.
+  *result = *other;
+
+  // Clone the components and set them.
+  result->behavior = BehaviorClone(other->behavior, result);
+  result->sprite = SpriteClone(other->sprite);
+  result->animation = AnimationClone(other->animation, result->sprite);
+  result->physics = PhysicsClone(other->physics);
+  result->transform = TransformClone(other->transform);
+
+  return result;
+}
+
+// Flag a game object for destruction.
+// (Note: This is to avoid game objects being destroyed while they are being processed.)
+// Params:
+//	 gameObject = Pointer to the game object to be destroyed.
+// Returns:
+//	 If 'gameObject' is valid,
+//	   then set the 'isDestroyed' boolean variable,
+//	   else bail.
+void GameObjectDestroy(GameObjectPtr gameObject)
+{
+  if (gameObject != NULL) 
+  {
+    gameObject->isDestroyed = true;
+  }
+}
+
+// Check whether a game object has been flagged for destruction.
+// Params:
+//	 gameObject = Pointer to the game object to be checked.
+// Returns:
+//	 If 'gameObject' is valid,
+//	   then return the 'isDestroyed' boolean variable,
+//	   else return false.
+bool GameObjectIsDestroyed(GameObjectPtr gameObject)
+{
+  if (gameObject != NULL)
+    return gameObject->isDestroyed;
+  else
+    return false;
 }
 
 // Free the memory associated with a game object, including all components.
@@ -153,6 +222,21 @@ void GameObjectAddTransform(GameObjectPtr gameObject, TransformPtr transform)
   }
 }
 
+// Attach a behavior component to a game object.
+// Params:
+//	 gameObject = Pointer to the game object.
+//   behavior = Pointer to the behavior component to be attached.
+void GameObjectAddBehavior(GameObjectPtr gameObject, BehaviorPtr behavior)
+{
+  if (gameObject != NULL)
+  {
+    // Set the behavior
+    gameObject->behavior = behavior;
+    // Set the parent
+    behavior->parent = gameObject;
+  }
+}
+
 // Get the physics component attached to a game object.
 // Params:
 //	 gameObject = Pointer to the game object.
@@ -213,6 +297,60 @@ TransformPtr GameObjectGetTransform(const GameObjectPtr gameObject)
     return NULL;
 }
 
+// Get the behavior component attached to a game object.
+// Params:
+//	 gameObject = Pointer to the game object.
+// Returns:
+//	 If the game object pointer is valid,
+//		then return a pointer to the attached behavior component,
+//		else return NULL.
+BehaviorPtr GameObjectGetBehavior(const GameObjectPtr gameObject)
+{
+  if (gameObject != NULL)
+    return gameObject->behavior;
+  else
+    return NULL;
+}
+
+// Get the game object's name.
+// Params:
+//	 gameObject = Pointer to the game object.
+// Returns:
+//	 If the game object pointer is valid,
+//		then return a pointer to the game object's name,
+//		else return NULL.
+const char * GameObjectGetName(const GameObject * gameObject)
+{
+  if (gameObject != NULL)
+    return gameObject->name;
+  else
+    return NULL;
+}
+
+// Compare the game object's name with the specified name.
+// Params:
+//	 gameObject = Pointer to the game object.
+//   name = Pointer to the name to be checked.
+// Returns:
+//	 If the game object pointer is valid,
+//		then return true if the names match, false otherwise,
+//		else return false.
+bool GameObjectIsNamed(const GameObject * gameObject, const char * name)
+{
+  if (gameObject != NULL)
+  {
+    // Compare both strings. IF they are the same
+    if (strcmp(gameObject->name, name) == 0)
+    {
+      return true;
+    }
+    // else return false
+    return false;
+  }
+  else
+    return false;
+}
+
 // Update any components attached to the game object.
 // (Hint: You will need to call PhysicsUpdate().)
 // (NOTE: You must first check for a valid pointer before calling this function.)
@@ -231,6 +369,11 @@ void GameObjectUpdate(GameObjectPtr gameObject, float dt)
     if (gameObject->animation != NULL)
     {
       AnimationUpdate(gameObject->animation, dt);
+    }
+
+    if (gameObject->behavior != NULL)
+    {
+      BehaviorUpdate(gameObject->behavior, dt);
     }
   }
 }

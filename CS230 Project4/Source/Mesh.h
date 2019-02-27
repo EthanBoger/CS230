@@ -1,30 +1,37 @@
 //------------------------------------------------------------------------------
 //
-// File Name:	Mesh.c
-// Author(s):	Roland Shum
+// File Name:	Mesh.h
+// Author(s):	Doug Schilling (dschilling)
 // Project:		MyGame
 // Course:		CS230S19
 //
 // Copyright © 2019 DigiPen (USA) Corporation.
 //
 //------------------------------------------------------------------------------
-#include "stdafx.h"
-#include "Mesh.h"
-#include "../AE/include/AEEngine.h"
-#include "SpriteSource.h"
-#include "Transform.h"
+
+#pragma once
+
 //------------------------------------------------------------------------------
 // Include Files:
 //------------------------------------------------------------------------------
 
+//------------------------------------------------------------------------------
+
+#ifdef __cplusplus
+extern "C" {
+	/* Assume C declarations for C++ */
+#endif
 
 //------------------------------------------------------------------------------
 // Forward References:
 //------------------------------------------------------------------------------
 
+typedef struct AEGfxVertexList AEGfxVertexList;
+typedef struct Matrix2D Matrix2D;
+typedef struct SpriteSource SpriteSource;
 
 //------------------------------------------------------------------------------
-// Public Consts:
+// Public Constants:
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -50,45 +57,19 @@
 //	 If the mesh was created successfully,
 //	   then return a pointer to the created mesh,
 //	   else return NULL.
-AEGfxVertexList * MeshCreateQuad(float xHalfSize, float yHalfSize, float uSize, float vSize, const char * name)
-{
-  AEGfxVertexList *result;
+AEGfxVertexList * MeshCreateQuad(float xHalfSize, float yHalfSize, float uSize, float vSize, const char * name);
 
-  AEGfxMeshStart();
-  AEGfxTriAdd(
-    -xHalfSize, -yHalfSize, 0xFFFFFFFF, 0.0f, vSize,
-    xHalfSize, -yHalfSize, 0xFFFFFFFF, uSize, vSize,
-    -xHalfSize, yHalfSize, 0xFFFFFFFF, 0.0f, 0.0f);
+// Render a mesh (textured or untextured) using the Alpha Engine.
+// Params:
+//	 mesh = Pointer to the mesh to be rendered.
+//	 spriteSource = Pointer to sprite source used for rendering (this may be NULL).
+//	 transform = The transformation matrix used to scale, rotate, and translate the sprite.
+//	 frameIndex = The index into a sprite sheet; used for calculating UV offsets.
+void MeshRender(AEGfxVertexList * mesh, SpriteSource * spriteSource, Matrix2D * transform, unsigned frameIndex);
 
-  AEGfxTriAdd(
-    xHalfSize, -yHalfSize, 0xFFFFFFFF, uSize, vSize,
-    xHalfSize, yHalfSize, 0xFFFFFFFF, uSize, 0.0f,
-    -xHalfSize, yHalfSize, 0xFFFFFFFF, 0.0f, 0.0f);
+//------------------------------------------------------------------------------
 
-  result = AEGfxMeshEnd();
-  /* Error checking */
-  AE_ASSERT_MESG(result, "Failed to create mesh %s!", name);
+#ifdef __cplusplus
+}                       /* End of extern "C" { */
+#endif
 
-  return result;
-}
-
-void MeshRender(AEGfxVertexList * mesh, SpriteSource * spriteSource, Matrix2D * transform, unsigned frameIndex)
-{
-  assert(mesh);
-  assert(transform);
-
-  if (spriteSource != NULL)
-  {
-    /* Find the u and v texture to use from spritesource. */
-    float u, v;
-    SpriteSourceGetUV(spriteSource, frameIndex, &u, &v);
-
-    /* Set the texture. */
-    AEGfxTextureSet(SpriteSourceGetTexture(spriteSource), u, v);
-  }
-
-  /* Set the scale, translation, and rotation in the world. */
-  AEGfxSetTransform((void*)transform);
-
-  AEGfxMeshDraw(mesh, AE_GFX_MDM_TRIANGLES);
-}
