@@ -17,10 +17,6 @@
 
 //------------------------------------------------------------------------------
 
-#ifdef __cplusplus
-extern "C" {
-	/* Assume C declarations for C++ */
-#endif
 
 //------------------------------------------------------------------------------
 // Public Constants:
@@ -50,8 +46,4 @@ void EngineUpdate(float dt);
 void EngineShutdown();
 
 /*----------------------------------------------------------------------------*/
-
-#ifdef __cplusplus
-}                       /* End of extern "C" { */
-#endif
 

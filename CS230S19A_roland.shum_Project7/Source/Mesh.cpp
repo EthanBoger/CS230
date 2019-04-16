@@ -81,14 +81,14 @@ void MeshRender(AEGfxVertexList * mesh, SpriteSource * spriteSource, Matrix2D * 
   {
     /* Find the u and v texture to use from spritesource. */
     float u, v;
-    SpriteSourceGetUV(spriteSource, frameIndex, &u, &v);
+	spriteSource->getUV(frameIndex, &u, &v);
 
     /* Set the texture. */
-    AEGfxTextureSet(SpriteSourceGetTexture(spriteSource), u, v);
+    AEGfxTextureSet(spriteSource->getTexture, u, v);
   }
 
   /* Set the scale, translation, and rotation in the world. */
-  AEGfxSetTransform((void*)transform);
+  AEGfxSetTransform((float(*)[3])transform);
 
   AEGfxMeshDraw(mesh, AE_GFX_MDM_TRIANGLES);
 }

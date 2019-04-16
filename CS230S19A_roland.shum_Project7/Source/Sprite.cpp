@@ -98,15 +98,15 @@ void Sprite::Draw(TransformPtr transform)
 
   if (this->text == NULL)
   {
-    MeshRender(this->mesh, this->spriteSource, TransformGetMatrix(transform), this->frameIndex);
+    MeshRender(this->mesh, this->spriteSource, transform->getMatrix(), this->frameIndex);
   }
   else // Else its a text.
   {
     /* Get a local copy of the transformation matrix. */
-    Matrix2D transformMtx = *TransformGetMatrix(transform);
+    Matrix2D transformMtx = *transform->getMatrix();
 
     Matrix2D offset;
-    Matrix2DTranslate(&offset, TransformGetScale(transform)->x, 0);
+    Matrix2DTranslate(&offset, transform->getScale()->x, 0);
 
     // Local pointer to char's 
     const char * pchar = this->text;
@@ -168,7 +168,7 @@ void Sprite::setFrame(unsigned frameIndex)
 {
 
   /* Clamp the frameindex */
-  frameIndex = (unsigned int)AEClamp((float)frameIndex, 0, (float)SpriteSourceGetFrameCount(this->spriteSource));
+  frameIndex = (unsigned int)AEClamp((float)frameIndex, 0, (float)spriteSource->getFrameCount());
 
   /* Set the frame index. */
   this->frameIndex = frameIndex;

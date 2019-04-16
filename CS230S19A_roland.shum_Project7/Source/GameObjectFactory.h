@@ -17,11 +17,6 @@
 
 //------------------------------------------------------------------------------
 
-#ifdef __cplusplus
-extern "C" {
-	/* Assume C declarations for C++ */
-#endif
-
 //------------------------------------------------------------------------------
 // Forward References:
 //------------------------------------------------------------------------------
@@ -32,17 +27,57 @@ typedef struct GameObject *GameObjectPtr;
 // Public Consts:
 //------------------------------------------------------------------------------
 
-typedef enum GameObjectType
+
+class GameObjectFactory
 {
-	cGameObjectTypeSpaceship,
-	cGameObjectTypeAsteroid,
-	cGameObjectTypeBullet,
-	cGameObjectTypeHudText,
-	cGameObjectTypeArena,
+public:
+	enum GameObjectType
+	{
+		cGameObjectTypeSpaceship,
+		cGameObjectTypeAsteroid,
+		cGameObjectTypeBullet,
+		cGameObjectTypeHudText,
+		cGameObjectTypeArena,
 
-	cGameObjectTypeCount,
+		cGameObjectTypeCount,
 
-} GameObjectType;
+	};
+	static GameObjectPtr Create(GameObjectType objectType);
+	static void UnloadResources();
+
+private:
+	typedef struct AEGfxVertexList * AEGfxVertexListPtr;
+	typedef struct AEGfxTexture * AEGfxVertexTexturePtr;
+
+	static AEGfxVertexListPtr meshList[GameObjectFactory::GameObjectType::cGameObjectTypeCount];
+	static SpriteSourcePtr spriteSourceList[GameObjectFactory::GameObjectType::cGameObjectTypeCount];
+	static AEGfxVertexTexturePtr textureList[GameObjectFactory::GameObjectType::cGameObjectTypeCount];
+
+	static bool gameObjectTypeIsValid(GameObjectType objectType);
+
+	static AEGfxVertexListPtr GetMesh(GameObjectType objectType);
+	static AEGfxVertexListPtr CreateMesh(GameObjectType objectType);
+
+	static SpriteSourcePtr CreateSpriteSource(GameObjectType objectType);
+	static SpriteSourcePtr GetSpriteSource(GameObjectType objectType);
+
+	static GameObjectPtr CreateSpaceship(void);
+	static GameObjectPtr CreateAsteroid(void);
+	static GameObjectPtr CreateBullet(void);
+	static GameObjectPtr CreateHudText(void);
+	static GameObjectPtr CreateArena(void);
+
+	static AEGfxVertexListPtr CreateBulletMesh(void);
+	static AEGfxVertexListPtr CreateSpaceshipMesh(void);
+	static AEGfxVertexListPtr Create16x6Mesh(void);
+	static AEGfxVertexListPtr CreateUnitSizedMesh(void);
+	static AEGfxVertexListPtr CreateAsteroidMesh(void);
+
+	static AEGfxVertexListPtr GetMesh(GameObjectType objectType);
+	static SpriteSourcePtr CreateSpriteSource(GameObjectType objectType);
+	static SpriteSourcePtr GetSpriteSource(GameObjectType objectType);
+
+};
 
 //------------------------------------------------------------------------------
 // Public Structures:
@@ -55,22 +90,4 @@ typedef enum GameObjectType
 //------------------------------------------------------------------------------
 // Public Functions:
 //------------------------------------------------------------------------------
-
-// Create a single instance of the specified game object.
-// Params:
-//	 objectType = The type of game object to be created.
-// Returns:
-//	 If the objectType is valid (between 0 and cGameObjectTypeCount),
-//	   then return a pointer to a new instance of the specified game object type,
-//	   else NULL.
-GameObjectPtr GameObjectFactoryCreate(GameObjectType objectType);
-
-// Free all meshes, textures and sprite sources associated with any created game objects.
-void GameObjectFactoryUnloadResources(void);
-
 //------------------------------------------------------------------------------
-
-#ifdef __cplusplus
-}                       /* End of extern "C" { */
-#endif
-

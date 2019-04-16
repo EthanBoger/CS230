@@ -59,7 +59,7 @@ public:
 	Transform(const Transform& other) = default;
 	~Transform() = default;
 
-	const Matrix2D* getMatrix();
+	Matrix2D* getMatrix();
 	const Vector2D* getTranslation() const;
 	float getRotation() const;
 	const Vector2D* getScale() const;

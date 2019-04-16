@@ -124,7 +124,7 @@ void Physics::Update(TransformPtr transform, float dt)
   if(transform != NULL)
   { 
     /* Update the old transform. */
-    this->oldTranslation = *TransformGetTranslation(transform);
+    this->oldTranslation = *transform->getTranslation();
 
     /* Find the resulant translation after velocity and acceleration are applied, with DT. */
     Vector2D result, accel_dt, velo_dt;
@@ -145,13 +145,13 @@ void Physics::Update(TransformPtr transform, float dt)
     Vector2DAdd(&result, &velo_dt, &this->oldTranslation);
 
     /* Set the new translation. */
-    TransformSetTranslation(transform, &result);
+	transform->setTranslation(&result);
 
     /* Update the rotation */
-    float rotation = TransformGetRotation(transform) + this->rotationalVelocity * dt;
+    float rotation = transform->getRotation() + this->rotationalVelocity * dt;
 
     /* Set the new rotation. */
-    TransformSetRotation(transform, rotation);
+	transform->setRotation(rotation);
   }
 }
 

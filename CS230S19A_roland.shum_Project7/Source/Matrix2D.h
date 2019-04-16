@@ -18,12 +18,12 @@
 #include "Vector2D.h"
 
 //------------------------------------------------------------------------------
-
-#ifdef __cplusplus
-extern "C" {
-	/* Assume C declarations for C++ */
-#endif
-
+//
+//#ifdef __cplusplus
+//extern "C" {
+//	/* Assume C declarations for C++ */
+//#endif
+//
 //------------------------------------------------------------------------------
 // Forward References:
 //------------------------------------------------------------------------------
@@ -108,7 +108,7 @@ void Matrix2DMultVec(Vector2D *pResult, Matrix2D *pMtx, Vector2D *pVec);
 
 //------------------------------------------------------------------------------
 
-#ifdef __cplusplus
-}                       /* End of extern "C" { */
-#endif
-
+//#ifdef __cplusplus
+//}                       /* End of extern "C" { */
+//#endif
+//

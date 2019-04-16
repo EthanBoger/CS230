@@ -48,27 +48,12 @@ typedef struct AEGfxTexture * AEGfxVertexTexturePtr;
 //------------------------------------------------------------------------------
 // Private Variables:
 //------------------------------------------------------------------------------
-static AEGfxVertexListPtr meshList[cGameObjectTypeCount] = { 0 };
-static SpriteSourcePtr spriteSourceList[cGameObjectTypeCount] = { 0 };
-static AEGfxVertexTexturePtr textureList[cGameObjectTypeCount] = { 0 };
 
 
 //------------------------------------------------------------------------------
 // Private Function Declarations:
 //------------------------------------------------------------------------------
-static bool gameObjectTypeIsValid(GameObjectType objectType);
 
-static AEGfxVertexListPtr GameObjectFactoryGetMesh(GameObjectType objectType);
-static AEGfxVertexListPtr GameObjectFactoryCreateMesh(GameObjectType objectType);
-
-static SpriteSourcePtr GameObjectFactoryCreateSpriteSource(GameObjectType objectType);
-static SpriteSourcePtr GameObjectFactoryGetSpriteSource(GameObjectType objectType);
-
-static GameObjectPtr GameObjectFactoryCreateSpaceship(void);
-static GameObjectPtr GameObjectFactoryCreateAsteroid(void);
-static GameObjectPtr GameObjectFactoryCreateBullet(void);
-static GameObjectPtr GameObjectFactoryCreateHudText(void);
-static GameObjectPtr GameObjectFactoryCreateArena(void);
 //------------------------------------------------------------------------------
 // Public Functions:
 //------------------------------------------------------------------------------
@@ -80,7 +65,7 @@ static GameObjectPtr GameObjectFactoryCreateArena(void);
 //	 If the objectType is valid (between 0 and cGameObjectTypeCount),
 //	   then return a pointer to a new instance of the specified game object type,
 //	   else NULL.
-GameObjectPtr GameObjectFactoryCreate(GameObjectType objectType)
+GameObjectPtr GameObjectFactory::Create(GameObjectFactory::GameObjectType objectType)
 {
 	// If not between 0 and cGameObjectTypeCount
 	if (!gameObjectTypeIsValid(objectType))
@@ -88,19 +73,19 @@ GameObjectPtr GameObjectFactoryCreate(GameObjectType objectType)
 	switch (objectType)
 	{
 	case cGameObjectTypeSpaceship:
-		return GameObjectFactoryCreateSpaceship();
+		return GameObjectFactory::CreateSpaceship();
 		break;
 	case cGameObjectTypeAsteroid:
-		return GameObjectFactoryCreateAsteroid();
+		return GameObjectFactory::CreateAsteroid();
 		break;
 	case cGameObjectTypeBullet:
-		return GameObjectFactoryCreateBullet();
+		return GameObjectFactory::CreateBullet();
 		break;
 	case cGameObjectTypeHudText:
-		return GameObjectFactoryCreateHudText();
+		return GameObjectFactory::CreateHudText();
 		break;
 	case cGameObjectTypeArena:
-		return GameObjectFactoryCreateArena();
+		return GameObjectFactory::CreateArena();
 		break;
 	default:
 		break;
@@ -109,7 +94,7 @@ GameObjectPtr GameObjectFactoryCreate(GameObjectType objectType)
 }
 
 // Free all meshes, textures and sprite sources associated with any created game objects.
-void GameObjectFactoryUnloadResources(void)
+void GameObjectFactory::UnloadResources(void)
 {
 	for (int i = 0; i < cGameObjectTypeCount; i++)
 	{
@@ -132,7 +117,7 @@ void GameObjectFactoryUnloadResources(void)
 //------------------------------------------------------------------------------
 // Private Functions:
 //------------------------------------------------------------------------------
-static AEGfxVertexListPtr CreateSpaceshipMesh(void)
+AEGfxVertexListPtr GameObjectFactory::CreateSpaceshipMesh(void)
 {
 	AEGfxVertexListPtr mesh;
 	// Create triangle spaceship
@@ -142,11 +127,10 @@ static AEGfxVertexListPtr CreateSpaceshipMesh(void)
 		0.5f, 0.0f, 0xFFFFFF00, 0.0f, 0.0f,
 		-0.5f, 0.5f, 0xFFFF0000, 0.0f, 0.0f);
 	mesh = AEGfxMeshEnd();
-	AE_ASSERT_MESG(mesh, "Failed to create spaceship mesh!");
 	return mesh;
 }
 
-static AEGfxVertexListPtr CreateBulletMesh(void)
+AEGfxVertexListPtr GameObjectFactory::CreateBulletMesh(void)
 {
 	AEGfxVertexListPtr mesh;
 	// Create bullet mesh
@@ -156,27 +140,24 @@ static AEGfxVertexListPtr CreateBulletMesh(void)
 		0.5f, 0.0f, 0xFFFFFF00, 0.0f, 0.0f,
 		-0.5f, 0.5f, 0xFFFF0000, 0.0f, 0.0f);
 	mesh = AEGfxMeshEnd();
-	AE_ASSERT_MESG(mesh, "Failed to create bullet mesh!");
 	return mesh;
 }
 
-static AEGfxVertexListPtr Create16x6Mesh(void)
+AEGfxVertexListPtr GameObjectFactory::Create16x6Mesh(void)
 {
 	AEGfxVertexListPtr mesh;
 	mesh = MeshCreateQuad(0.5f, 0.5f, 1.0f / 16, 1.0f / 6, "Mesh16x6");
-	AE_ASSERT_MESG(mesh, "Failed to create 16x6 mesh!");
 	return mesh;
 }
 
-static AEGfxVertexListPtr CreateUnitSizedMesh( void)
+AEGfxVertexListPtr GameObjectFactory::CreateUnitSizedMesh( void)
 {
 	AEGfxVertexListPtr mesh;
 	mesh = MeshCreateQuad(0.5f, 0.5f, 1.0f, 1.0f, "UnitSizeMesh");
-	AE_ASSERT_MESG(mesh, "Failed to create 16x6 mesh!");
 	return mesh;
 }
 
-static AEGfxVertexListPtr CreateAsteroidMesh(void)
+AEGfxVertexListPtr GameObjectFactory::CreateAsteroidMesh(void)
 {
 	AEGfxVertexListPtr mesh;
 	AEGfxMeshStart();
@@ -193,11 +174,10 @@ static AEGfxVertexListPtr CreateAsteroidMesh(void)
 		0.5f, -0.5f, 0xFFFF0080, 0.0f, 0.0f,
 		0.4f, 0.0f, 0xFF808080, 0.0f, 0.0f);
 	mesh = AEGfxMeshEnd();
-	AE_ASSERT_MESG(mesh, "Failed to create asteroid mesh!");
 	return mesh;
 }
 
-static AEGfxVertexListPtr GameObjectFactoryCreateMesh(GameObjectType objectType)
+AEGfxVertexListPtr GameObjectFactory::CreateMesh(GameObjectType objectType)
 {
 	switch (objectType)
 	{
@@ -222,18 +202,18 @@ static AEGfxVertexListPtr GameObjectFactoryCreateMesh(GameObjectType objectType)
 	return NULL;
 }
 
-static AEGfxVertexListPtr GameObjectFactoryGetMesh(GameObjectType objectType)
+AEGfxVertexListPtr GameObjectFactory::GetMesh(GameObjectType objectType)
 {
 	if (!gameObjectTypeIsValid(objectType))
 		return NULL;
 	if (meshList[objectType] == NULL)
 	{
-		meshList[objectType] = GameObjectFactoryCreateMesh(objectType);
+		meshList[objectType] = GameObjectFactory::CreateMesh(objectType);
 	}
 	return meshList[objectType];
 }
 
-static SpriteSourcePtr GameObjectFactoryCreateSpriteSource(GameObjectType objectType)
+SpriteSourcePtr GameObjectFactory::CreateSpriteSource(GameObjectType objectType)
 {
 	SpriteSourcePtr result;
 	switch (objectType)
@@ -255,18 +235,18 @@ static SpriteSourcePtr GameObjectFactoryCreateSpriteSource(GameObjectType object
 	return NULL;
 }
 
-static SpriteSourcePtr GameObjectFactoryGetSpriteSource(GameObjectType objectType)
+SpriteSourcePtr GameObjectFactory::GetSpriteSource(GameObjectType objectType)
 {
 	if (!gameObjectTypeIsValid(objectType))
 		return NULL;
 	if (spriteSourceList[objectType] == NULL)
 	{
-		spriteSourceList[objectType] = GameObjectFactoryCreateSpriteSource(objectType);
+		spriteSourceList[objectType] = GameObjectFactory::CreateSpriteSource(objectType);
 	}
 	return spriteSourceList[objectType];
 }
 
-static bool gameObjectTypeIsValid(GameObjectType objectType)
+bool GameObjectFactory::gameObjectTypeIsValid(GameObjectType objectType)
 {
 	// If not between 0 and cGameObjectTypeCount
 	if (!(0 <= objectType && objectType < cGameObjectTypeCount))
@@ -274,7 +254,7 @@ static bool gameObjectTypeIsValid(GameObjectType objectType)
 	return true;
 }
 
-static GameObjectPtr GameObjectFactoryCreateSpaceship(void)
+GameObjectPtr GameObjectFactory::CreateSpaceship(void)
 {
 	GameObjectPtr newObj = GameObjectCreate("Spaceship");
 	TransformPtr trans = TransformCreate(0, 0);
@@ -317,7 +297,7 @@ static GameObjectPtr GameObjectFactoryCreateSpaceship(void)
 	return newObj;
 }
 
-static GameObjectPtr GameObjectFactoryCreateAsteroid(void)
+GameObjectPtr GameObjectFactory::CreateAsteroid(void)
 {
 	GameObjectPtr newObj = GameObjectCreate("Asteroid");
 	TransformPtr trans = TransformCreate(0, 0);
@@ -359,7 +339,7 @@ static GameObjectPtr GameObjectFactoryCreateAsteroid(void)
 	return newObj;
 }
 
-static GameObjectPtr GameObjectFactoryCreateBullet(void)
+GameObjectPtr GameObjectFactory::CreateBullet(void)
 {
 	GameObjectPtr newObj = GameObjectCreate("Bullet");
 	TransformPtr trans = TransformCreate(0, 0);
@@ -399,7 +379,7 @@ static GameObjectPtr GameObjectFactoryCreateBullet(void)
 	return newObj;
 }
 
-static GameObjectPtr GameObjectFactoryCreateHudText(void)
+GameObjectPtr GameObjectFactory::CreateHudText(void)
 {
 	GameObjectPtr newObj = GameObjectCreate("HUD Text");
 	TransformPtr trans = TransformCreate(0, 0);
@@ -432,7 +412,7 @@ static GameObjectPtr GameObjectFactoryCreateHudText(void)
 	return newObj;
 }
 
-static GameObjectPtr GameObjectFactoryCreateArena(void)
+GameObjectPtr GameObjectFactory::CreateArena(void)
 {
 	GameObjectPtr newObj = GameObjectCreate("Arena");
 	TransformPtr trans = TransformCreate(0, 0);

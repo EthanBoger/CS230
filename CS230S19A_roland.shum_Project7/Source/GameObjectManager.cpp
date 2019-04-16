@@ -15,26 +15,11 @@
 //------------------------------------------------------------------------------
 // Private Consts:
 //------------------------------------------------------------------------------
-#define objectListSize 100
+
 //------------------------------------------------------------------------------
 // Private Structures:
 //------------------------------------------------------------------------------
-// An example of the structure to be defined in GameStateManager.c.
-// You are free to change the contents of this structure as long as you do not
-//   change the public interface declared in the header.
-typedef struct GameObjectManager
-{
-  // The current number of game objects currently in the list.
-  unsigned int objectCount;
 
-  // The maximum number of game objects ever in the list, at any given moment.
-  unsigned int objectMax;
-
-  // This list can be a fixed-length array (minimum size of 100 entries)
-  // or a dynamically sized array, such as a linked list.
-  GameObjectPtr	objectList[objectListSize];
-
-} GameObjectManager;
 //------------------------------------------------------------------------------
 // Public Variables:
 //------------------------------------------------------------------------------
@@ -42,26 +27,31 @@ typedef struct GameObjectManager
 //------------------------------------------------------------------------------
 // Private Variables:
 //------------------------------------------------------------------------------
-static GameObjectManager gameObjectActiveList;
-static GameObjectManager gameObjectArchetypes;
+
 //------------------------------------------------------------------------------
 // Private Function Declarations:
 //------------------------------------------------------------------------------
-static void AddGameObject(GameObjectPtr *list, GameObjectPtr obj);
-static GameObjectPtr FindGameObjectByName(GameObjectPtr *list, const char * name);
+
 //------------------------------------------------------------------------------
 // Public Functions:
 //------------------------------------------------------------------------------
 
-// Initialize the game object manager.
-// (NOTE: This function should initialize the lists for both active game objects
-//    and the archetype objects.)
-void GameObjectManagerInit(void)
+GameObjectManager::GameObjectManager() : objectMax(objectListSize), objectCount(0)
 {
-  gameObjectActiveList.objectMax = objectListSize;
-  gameObjectArchetypes.objectMax = objectListSize;
-  gameObjectActiveList.objectCount = 0;
-  gameObjectArchetypes.objectCount = 0;
+
+}
+
+GameObjectManager::~GameObjectManager()
+{
+	for (int i = 0; i < objectMax; i++)
+	{
+		// If not null
+		if (objectList[i] != NULL)
+		{
+			// Destroy from active list
+			GameObjectFree(&gameObjectActiveList.objectList[i]);
+		}
+	}
 }
 
 // Update all objects in the active game objects list.
@@ -70,9 +60,9 @@ void GameObjectManagerInit(void)
 //    Additionally, the count of active objects must be reduced by 1.)
 // Params:
 //	 dt = Change in time (in seconds) since the last game loop.
-void GameObjectManagerUpdate(float dt)
+void GameObjectManagers::Update(float dt)
 {
-  for (int i = 0; i < objectListSize; i++)
+  for (int i = 0; i < gameObjectActiveList.objectMax; i++)
   {
     // If not null
     if (gameObjectActiveList.objectList[i] != NULL)
@@ -83,7 +73,7 @@ void GameObjectManagerUpdate(float dt)
   }
 
   // Destroy any marked GOs
-  for (int i = 0; i < objectListSize; i++)
+  for (int i = 0; i < gameObjectActiveList.objectMax; i++)
   {
     // If not null
     if (gameObjectActiveList.objectList[i] != NULL)
@@ -99,9 +89,9 @@ void GameObjectManagerUpdate(float dt)
 }
 
 // Draw all game objects in the active game object list.
-void GameObjectManagerDraw(void)
+void GameObjectManagers::Draw(void)
 {
-  for (int i = 0; i < objectListSize; i++)
+  for (int i = 0; i < gameObjectActiveList.objectMax; i++)
   {
     // If not null
     if (gameObjectActiveList.objectList[i] != NULL)
@@ -112,35 +102,13 @@ void GameObjectManagerDraw(void)
   }
 }
 
-// Shutdown the game object manager.
-// (NOTE: This means removing all game objects from both the active and
-//	  archetype game object lists.  Make sure that the object counts are
-//	  properly updated in both situations.)
-void GameObjectManagerShutdown(void)
-{
-  for (int i = 0; i < objectListSize; i++)
-  {
-    // If not null
-    if (gameObjectActiveList.objectList[i] != NULL)
-    {
-      // Destroy from active list
-      GameObjectFree(&gameObjectActiveList.objectList[i]);
-    } 
-    if (gameObjectArchetypes.objectList[i] != NULL)
-    {
-      // Destroy from archetype list
-      GameObjectFree(&gameObjectArchetypes.objectList[i]);
-    }
-  }
-}
-
 // Add a game object to the active game object list.
 // (Hint: This function and the GameObjectManagerAddArchetype functions require
 //    the same code.  Consider creating a single function that adds an object
 //	  to a list that is passed as a parameter.)
 // Params:
 //	 gameObject = Pointer to the game object to be added to the list.
-void GameObjectManagerAdd(GameObjectPtr gameObject)
+void GameObjectManagers::Add(GameObjectPtr gameObject)
 {
   AddGameObject(gameObjectActiveList.objectList, gameObject);
 }
@@ -151,7 +119,7 @@ void GameObjectManagerAdd(GameObjectPtr gameObject)
 //	 an object to a list that is passed as a parameter.)
 // Params:
 //	 gameObject = Pointer to the game object to be added to the list.
-void GameObjectManagerAddArchetype(GameObjectPtr gameObject)
+void GameObjectManagers::AddArchetype(GameObjectPtr gameObject)
 {
   AddGameObject(gameObjectArchetypes.objectList, gameObject);
 }
@@ -166,7 +134,7 @@ void GameObjectManagerAddArchetype(GameObjectPtr gameObject)
 //   If the named archetype is found,
 //	   then return the pointer to the named game object archetype,
 //	   else return NULL.
-GameObjectPtr GameObjectManagerGetObjectByName(const char * name)
+GameObjectPtr GameObjectManagers::GetObjectByName(const char * name)
 {
   return FindGameObjectByName(gameObjectActiveList.objectList, name);
 }
@@ -181,15 +149,15 @@ GameObjectPtr GameObjectManagerGetObjectByName(const char * name)
 //   If the named archetype is found,
 //	   then return the pointer to the named game object archetype,
 //	   else return NULL.
-GameObjectPtr GameObjectManagerGetArchetype(const char * name)
+GameObjectPtr GameObjectManagers::GetArchetype(const char * name)
 {
   return FindGameObjectByName(gameObjectArchetypes.objectList, name);
 }
 
 // Check collisions between all objects held by the game object manager.
-void GameObjectManagerCheckCollisions(void)
+void GameObjectManagers::CheckCollisions(void)
 {
-	for (int i = 0; i < objectListSize; i++)
+	for (int i = 0; i < gameObjectActiveList.objectMax; i++)
 	{
 		if (gameObjectActiveList.objectList[i] != NULL)
 		{
@@ -216,9 +184,9 @@ void GameObjectManagerCheckCollisions(void)
 //------------------------------------------------------------------------------
 // Private Functions:
 //------------------------------------------------------------------------------
-static void AddGameObject(GameObjectPtr *list, GameObjectPtr obj)
+void GameObjectManagers::AddGameObject(GameObjectPtr *list, GameObjectPtr obj)
 {
-  for (int i = 0; i < objectListSize; i++)
+  for (int i = 0; i < gameObjectActiveList.objectMax; i++)
   {
     if (list[i] == NULL)
     {
@@ -228,9 +196,9 @@ static void AddGameObject(GameObjectPtr *list, GameObjectPtr obj)
   }
 }
 
-static GameObjectPtr FindGameObjectByName(GameObjectPtr *list, const char * name)
+GameObjectPtr GameObjectManagers::FindGameObjectByName(GameObjectPtr *list, const char * name)
 {
-  for (int i = 0; i < objectListSize; i++)
+  for (int i = 0; i < gameObjectActiveList.objectMax; i++)
   {
     // If the slot is not empty
     if (list[i] != NULL)

@@ -69,7 +69,7 @@ Transform::Transform(float x, float y)
 //	 If the transform pointer is valid,
 //		then return a pointer to the component's matrix structure,
 //		else return a NULL pointer.
-const Matrix2D * Transform::getMatrix()
+Matrix2D * Transform::getMatrix()
 {
   if (this->isDirty)
   {

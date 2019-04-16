@@ -49,17 +49,6 @@ static bool ColliderIsColliding(ColliderPtr collider1, ColliderPtr collider2);
 // Public Functions:
 //------------------------------------------------------------------------------
 
-// Dynamically allocate a new collider component.
-// (Hint: Use calloc() to ensure that all member variables are initialized to 0.)
-ColliderPtr ColliderCreate(GameObjectPtr parent)
-{
-	ColliderPtr collider = calloc(1, sizeof(Collider));
-	if (collider == NULL)
-		return NULL;
-	collider->parent = parent;
-	return collider;
-}
-
 // Dynamically allocate a clone of an existing collider component.
 // (Hint: Perform a shallow copy of the member variables.)
 // Params:
@@ -69,13 +58,10 @@ ColliderPtr ColliderCreate(GameObjectPtr parent)
 //	 If 'other' is valid and the memory allocation was successful,
 //	   then return a pointer to the cloned component,
 //	   else return NULL.
-ColliderPtr ColliderClone(const ColliderPtr other, GameObjectPtr parent)
+ColliderPtr Collider::Clone(GameObjectPtr parent)
 {
-	if (other == NULL)
-		return NULL;
-
 	// Create on the heap.
-	ColliderPtr clone = calloc(1, other->memorySize);
+	ColliderPtr clone = new Collider
 	if (clone == NULL)
 		return NULL;
 

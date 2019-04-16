@@ -17,11 +17,6 @@
 //#include "Vector2D.h"
 //------------------------------------------------------------------------------
 
-#ifdef __cplusplus
-extern "C" {
-	/* Assume C declarations for C++ */
-#endif
-
 //------------------------------------------------------------------------------
 // Forward References:
 //------------------------------------------------------------------------------
@@ -65,8 +60,3 @@ void ScoreSystemIncreaseWaveCount();
 void ScoreSystemCreateHudElements(const Vector2D * positions);
 
 //------------------------------------------------------------------------------
-
-#ifdef __cplusplus
-}                       /* End of extern "C" { */
-#endif
-

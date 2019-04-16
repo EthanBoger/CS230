@@ -92,7 +92,7 @@ void Animation::Play(int frameCount, float frameDuration, bool isLooping)
   this->isRunning = true;
   this->isDone = false;
 
-  SpriteSetFrame(this->sprite, 0);
+  sprite->setFrame(0);
 }
 
 // Play a complex animation sequence (any frame/any delay).
@@ -160,7 +160,7 @@ void Animation::advanceFrames(float dt)
   if (this->isRunning)
   {
     // Update Sprite frame
-    SpriteSetFrame(this->sprite, this->frameIndex);
+    sprite->setFrame(this->frameIndex);
     this->frameDelay += this->frameDuration;
   }
   else
