@@ -44,44 +44,14 @@
 //------------------------------------------------------------------------------
 // Private Function Declarations:
 //------------------------------------------------------------------------------
-static bool ColliderIsColliding(ColliderPtr collider1, ColliderPtr collider2);
+
 //------------------------------------------------------------------------------
 // Public Functions:
 //------------------------------------------------------------------------------
 
-// Dynamically allocate a clone of an existing collider component.
-// (Hint: Perform a shallow copy of the member variables.)
-// Params:
-//	 other = Pointer to the component to be cloned.
-//   parent = Pointer to the cloned component's parent.
-// Returns:
-//	 If 'other' is valid and the memory allocation was successful,
-//	   then return a pointer to the cloned component,
-//	   else return NULL.
-ColliderPtr Collider::Clone(GameObjectPtr parent)
+Collider::Collider(ColliderType type) : type(type)
 {
-	// Create on the heap.
-	ColliderPtr clone = new Collider
-	if (clone == NULL)
-		return NULL;
 
-	// Shallow copy
-	memcpy_s(clone, other->memorySize, other, other->memorySize);
-
-	// Now set the parent
-	clone->parent = parent;
-
-	return clone;
-}
-
-// Free the memory associated with a collider component.
-// (Also, set the collider pointer to NULL.)
-// Params:
-//	 collider = Pointer to the collider component.
-void ColliderFree(ColliderPtr * collider)
-{
-	free(*collider);
-	*collider = NULL;
 }
 
 // Check if two objects are colliding.
@@ -91,13 +61,13 @@ void ColliderFree(ColliderPtr * collider)
 // Params:
 //	 collider1 = Pointer to the first collider component.
 //	 collider2 = Pointer to the second collider component.
-void ColliderCheck(ColliderPtr collider, ColliderPtr other)
+void Collider::Check(ColliderPtr collider, ColliderPtr other)
 {
 	//// Check if both pointers are valid.
 	if (collider == NULL || other == NULL)
 		return;
 
-	if (ColliderIsColliding(collider, other))
+	if (Collider::IsColliding(collider, other))
 	{
 		// We have collided.
 		if (collider->handler != NULL)
@@ -107,11 +77,11 @@ void ColliderCheck(ColliderPtr collider, ColliderPtr other)
 	}
 }
 
-static bool ColliderIsColliding(ColliderPtr collider1, ColliderPtr collider2)
+bool Collider::IsColliding(ColliderPtr collider1, ColliderPtr collider2)
 {
 	if (collider1->type == ColliderTypeCircle && collider2->type == ColliderTypeCircle)
 	{
-		return ColliderCircleIsCollidingWithCircle(collider1, collider2);
+		return ColliderCircle::CircleIsCollidingWithCircle(collider1, collider2);
 	}
 	else if (collider1->type == ColliderTypeLine && collider2->type == ColliderTypeLine)
 	{
@@ -120,11 +90,11 @@ static bool ColliderIsColliding(ColliderPtr collider1, ColliderPtr collider2)
 	// This and the last condition are the same, except swapped around.
 	else if (collider1->type == ColliderTypeLine && collider2->type == ColliderTypeCircle)
 	{
-		return ColliderLineIsCollidingWithCircle(collider1, collider2);
+		return ColliderLine::LineIsCollidingWithCircle(static_cast<ColliderLinePtr>(collider1), collider2);
 	}
 	else if (collider1->type == ColliderTypeCircle && collider2->type == ColliderTypeLine)
 	{
-		return ColliderLineIsCollidingWithCircle(collider2, collider1);
+		return ColliderLine::LineIsCollidingWithCircle(static_cast<ColliderLinePtr>(collider2), collider1);
 	}
 	return false;
 }
@@ -135,9 +105,9 @@ static bool ColliderIsColliding(ColliderPtr collider1, ColliderPtr collider2)
 // Params:
 //	 collider = Pointer to the collider component.
 //	 handler = Pointer to the collision event handler (may be NULL).
-void ColliderSetCollisionHandler(ColliderPtr collider, CollisionEventHandler handler)
+void Collider::SetCollisionHandler(CollisionEventHandler handler)
 {
-	collider->handler = handler;
+	this->handler = handler;
 }
 
 //------------------------------------------------------------------------------

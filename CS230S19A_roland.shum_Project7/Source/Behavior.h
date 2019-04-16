@@ -17,10 +17,6 @@
 
 //------------------------------------------------------------------------------
 
-#ifdef __cplusplus
-extern "C" {
-	/* Assume C declarations for C++ */
-#endif
 
 //------------------------------------------------------------------------------
 // Forward References:
@@ -47,6 +43,7 @@ typedef void(*BehaviorFunctionPtrDt)(BehaviorPtr behavior, float dt);
 // part of the public interface.
 typedef struct Behavior
 {
+protected:
 	// Pointer to the behavior's parent game object.
 	GameObjectPtr parent;
 
@@ -71,6 +68,27 @@ typedef struct Behavior
 	// (Default = 0, means infinite amount of time remaining or weapon can be fired.)
 	float	timer;
 
+public:
+	// Dynamically allocate a clone of an existing behavior.
+	// (Hint: Perform a shallow copy of the member variables, then change the 'parent' pointer.)
+	// Params:
+	//	 other = Pointer to the component to be cloned.
+	//   parent = Pointer to the cloned component's parent.
+	// Returns:
+	//	 If 'other' is valid and the memory allocation was successful,
+	//	   then return a pointer to the cloned component,
+	//	   else return NULL.
+	virtual BehaviorPtr BehaviorClone(GameObjectPtr parent) = 0;
+	Behavior(const Behavior& other) = default;
+	~Behavior() = default;
+
+	// Update the behavior component.
+	// (Hint: Refer to the Word document for detailed instructions regarding this function.)
+	// Params:
+	//	 behavior = Pointer to the behavior component.
+	//	 dt = Change in time (in seconds) since the last game loop.
+	void BehaviorUpdate(BehaviorPtr behavior, float dt);
+
 } Behavior;
 
 //------------------------------------------------------------------------------
@@ -81,33 +99,4 @@ typedef struct Behavior
 // Public Functions:
 //------------------------------------------------------------------------------
 
-// Dynamically allocate a clone of an existing behavior.
-// (Hint: Perform a shallow copy of the member variables, then change the 'parent' pointer.)
-// Params:
-//	 other = Pointer to the component to be cloned.
-//   parent = Pointer to the cloned component's parent.
-// Returns:
-//	 If 'other' is valid and the memory allocation was successful,
-//	   then return a pointer to the cloned component,
-//	   else return NULL.
-BehaviorPtr BehaviorClone(BehaviorPtr other, GameObjectPtr parent);
-
-// Free the memory associated with a behavior component.
-// (Also, set the behavior pointer to NULL.)
-// Params:
-//	 behavior = Pointer to the behavior component.
-void BehaviorFree(BehaviorPtr * behavior);
-
-// Update the behavior component.
-// (Hint: Refer to the Word document for detailed instructions regarding this function.)
-// Params:
-//	 behavior = Pointer to the behavior component.
-//	 dt = Change in time (in seconds) since the last game loop.
-void BehaviorUpdate(BehaviorPtr behavior, float dt);
-
 //------------------------------------------------------------------------------
-
-#ifdef __cplusplus
-}                       /* End of extern "C" { */
-#endif
-

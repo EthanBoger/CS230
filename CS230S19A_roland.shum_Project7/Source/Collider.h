@@ -21,7 +21,7 @@
 //------------------------------------------------------------------------------
 
 typedef struct Collider * ColliderPtr;
-//typedef struct GameObject * GameObjectPtr;
+typedef struct GameObject * GameObjectPtr;
 
 //------------------------------------------------------------------------------
 // Public Consts:
@@ -44,6 +44,9 @@ typedef void(*CollisionEventHandler)(GameObjectPtr gameObject1, GameObjectPtr ga
 class Collider
 {
 protected:
+	Collider(const Collider &other) = default;
+	Collider(ColliderType type);
+
 	// Pointer to the collider's parent game object.
 	GameObjectPtr parent;
 
@@ -63,8 +66,12 @@ protected:
 	//	 If 'other' is valid and the memory allocation was successful,
 	//	   then return a pointer to the cloned component,
 	//	   else return NULL.
-	virtual ColliderPtr Clone(GameObjectPtr parent);
+	virtual ColliderPtr Clone(GameObjectPtr parent) = 0;
 
+
+private:
+	static bool IsColliding(ColliderPtr collider1, ColliderPtr collider2);
+public:
 	// Set the collision event handler for a collider.
 	// (Hint: This allows other components, such as behaviors, to respond to collision events.)
 	// (Note: It is acceptable for the handler to be NULL.  This allows an existing handler to be removed.)
@@ -73,8 +80,6 @@ protected:
 	//	 handler = Pointer to the collision event handler (may be NULL).
 	void SetCollisionHandler(CollisionEventHandler handler);
 
-
-public:
 	// Check if two objects are colliding.
 	// (Hint: Refer to the project instructions for implementation suggestions.)
 	// (Hint: Make sure to call the handler for both colliders, passing the 

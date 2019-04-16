@@ -35,43 +35,44 @@
 //------------------------------------------------------------------------------
 // Public Functions:
 //------------------------------------------------------------------------------
-
-// Dynamically allocate a clone of an existing behavior.
-// (Hint: Perform a shallow copy of the member variables, then change the 'parent' pointer.)
-// Params:
-//	 other = Pointer to the component to be cloned.
-// Returns:
-//	 If 'other' is valid and the memory allocation was successful,
-//	   then return a pointer to the cloned component,
-//	   else return NULL.
-BehaviorPtr BehaviorClone(BehaviorPtr other, GameObjectPtr parent)
-{
-  if (other == NULL)
-    return NULL;
-
-  // Allocate memory for a new behavior
-  BehaviorPtr clone = malloc(other->memorySize);
-
-  // Check if clone was allocated
-  if (clone == NULL)
-  {
-    return NULL;
-  }
-
-  // Shallow copy
-  memcpy_s(clone, other->memorySize, other, other->memorySize);
-
-  // Point the parent
-  clone->parent = parent;
-
-  // Return
-  return clone;
-}
+//
+//// Dynamically allocate a clone of an existing behavior.
+//// (Hint: Perform a shallow copy of the member variables, then change the 'parent' pointer.)
+//// Params:
+////	 other = Pointer to the component to be cloned.
+//// Returns:
+////	 If 'other' is valid and the memory allocation was successful,
+////	   then return a pointer to the cloned component,
+////	   else return NULL.
+//BehaviorPtr BehaviorClone(BehaviorPtr other, GameObjectPtr parent)
+//{
+//  if (other == NULL)
+//    return NULL;
+//
+//  // Allocate memory for a new behavior
+//  BehaviorPtr clone = malloc(other->memorySize);
+//
+//  // Check if clone was allocated
+//  if (clone == NULL)
+//  {
+//    return NULL;
+//  }
+//
+//  // Shallow copy
+//  memcpy_s(clone, other->memorySize, other, other->memorySize);
+//
+//  // Point the parent
+//  clone->parent = parent;
+//
+//  // Return
+//  return clone;
+//}
 
 // Free the memory associated with a behavior component.
 // (Also, set the behavior pointer to NULL.)
 // Params:
 //	 behavior = Pointer to the behavior component.
+
 void BehaviorFree(BehaviorPtr * behavior)
 {
 	if (*behavior == NULL)

@@ -11,23 +11,18 @@
 
 #pragma once
 #include "stdafx.h"
+#include "Collider.h"
 //------------------------------------------------------------------------------
 // Include Files:
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 
-#ifdef __cplusplus
-extern "C" {
-	/* Assume C declarations for C++ */
-#endif
-
 //------------------------------------------------------------------------------
 // Forward References:
 //------------------------------------------------------------------------------
 
-typedef struct Collider		*ColliderPtr;
-typedef struct Vector2D		Vector2D;
+typedef struct Vector2D	Vector2D;
 
 //------------------------------------------------------------------------------
 // Public Consts:
@@ -38,18 +33,25 @@ typedef struct Vector2D		Vector2D;
 //------------------------------------------------------------------------------
 
 // An example of the structures to be defined in ColliderLine.c.
-#if 0
 typedef struct ColliderLineSegment
 {
 	// A single line segment (P0 and P1).
 	Vector2D	point[2];
 } ColliderLineSegment;
 
-typedef struct ColliderLine
+typedef struct ColliderLine : public Collider
 {
-	// Inherit the base collider structure.
-	Collider	base;
+private:
+	static const int cLineSegmentMax = 100;
 
+	typedef struct CollisionData
+	{
+		Vector2D collisionPoint;
+		Vector2D reflectionVector;
+		Vector2D newEndPoint;
+	}CollisionData, *CollisionDataPtr;
+
+private:
 	// The number of line segments in the list.
 	unsigned int		lineCount;
 
@@ -57,8 +59,27 @@ typedef struct ColliderLine
 	// (NOTE: Make sure to allocate enough memory for all line segments!)
 	ColliderLineSegment	lineSegments[cLineSegmentMax];
 
+
+
+public:
+	ColliderLine();
+
+	void AddLineSegment(const Vector2D * p0, const Vector2D * p1);
+
+	static bool PointLineIntersection(Vector2D const *circlePosition, Vector2D const *velocity,
+		ColliderLineSegment const *segment, float radius, Vector2D *point);
+
+	virtual ColliderPtr Clone(GameObjectPtr parent);
+
+	static bool LineIsCollidingWithCircle(ColliderLinePtr collider, ColliderCirclePtr other);
+
+private:
+	static bool StaticPointInStaticCircle(Vector2D const *circlePosition, float radius, Vector2D const * point);
+	static CollisionData CaclCollisionResponse(Vector2D const *circlePosition, Vector2D const *velocity,
+		ColliderLineSegment const *segment, Vector2D const *collisionPoint);
+
 } ColliderLine, *ColliderLinePtr;
-#endif
+
 
 //------------------------------------------------------------------------------
 // Public Variables:
@@ -68,31 +89,4 @@ typedef struct ColliderLine
 // Public Functions:
 //------------------------------------------------------------------------------
 
-// Dynamically allocate a new (line) collider component.
-// (Hint: Use calloc() to ensure that all member variables are initialized to 0.)
-// (Hint: Make sure to initialize the ColliderType and memorySize correctly.)
-ColliderPtr ColliderLineCreate(void);
-
-// Add a line segment to the line collider's line segment list.
-// Params:
-//	 collider = Pointer to the line collider component.
-//	 p0 = The line segment's starting position.
-//	 p1 = The line segment's ending position.
-void ColliderLineAddLineSegment(ColliderPtr collider, const Vector2D * p0, const Vector2D * p1);
-
-// Check for collision between a line collider and a circle collider.
-// Params:
-//	 collider1 = Pointer to the line collider component.
-//	 collider2 = Pointer to the circle collider component.
-// Returns:
-//	 If the pointers are valid,
-//	   then return the results of a line-circle collision check,
-//	   else return false.
-bool ColliderLineIsCollidingWithCircle(ColliderPtr collider, ColliderPtr other);
-
 //------------------------------------------------------------------------------
-
-#ifdef __cplusplus
-}                       /* End of extern "C" { */
-#endif
-
