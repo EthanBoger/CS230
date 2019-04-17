@@ -10,7 +10,7 @@
 //------------------------------------------------------------------------------
 
 #pragma once
-
+#include <functional>
 //------------------------------------------------------------------------------
 // Include Files:
 //------------------------------------------------------------------------------
@@ -22,7 +22,7 @@
 // Forward References:
 //------------------------------------------------------------------------------
 
-//typedef struct GameObject * GameObjectPtr;
+typedef struct GameObject * GameObjectPtr;
 
 //------------------------------------------------------------------------------
 // Public Consts:
@@ -34,8 +34,11 @@
 
 typedef struct Behavior * BehaviorPtr;
 
-typedef void(*BehaviorFunctionPtr)(BehaviorPtr behavior);
-typedef void(*BehaviorFunctionPtrDt)(BehaviorPtr behavior, float dt);
+//typedef void(Behavior::*BehaviorFunctionPtr)();
+//typedef void(Behavior::*BehaviorFunctionPtrDt)(float dt);
+
+typedef std::function<void()> BehaviorFunctionPtr;
+typedef std::function<void(float)> BehaviorFunctionPtrDt;
 
 // This structure is being declared publicly, as it will be used to implement
 // pseudo-inheritance in Project 5.
@@ -46,11 +49,6 @@ typedef struct Behavior
 protected:
 	// Pointer to the behavior's parent game object.
 	GameObjectPtr parent;
-
-	// The following variable is used to allocate the correct amount of memory
-	//   when cloning a behavior component.  Cloning of "derived" behaviors will
-	//   fail if insufficient memory is allocated.
-	unsigned int memorySize;
 
 	// Behavior Finite-State Machine (FSM) state variables.
 	int stateCurr;
@@ -78,16 +76,17 @@ public:
 	//	 If 'other' is valid and the memory allocation was successful,
 	//	   then return a pointer to the cloned component,
 	//	   else return NULL.
-	virtual BehaviorPtr BehaviorClone(GameObjectPtr parent) = 0;
+	virtual BehaviorPtr Clone(GameObjectPtr parent) = 0;
 	Behavior(const Behavior& other) = default;
-	~Behavior() = default;
+	Behavior(BehaviorFunctionPtr, BehaviorFunctionPtrDt, BehaviorFunctionPtr, int curr, int next, GameObjectPtr parent);
+	~Behavior();
 
 	// Update the behavior component.
 	// (Hint: Refer to the Word document for detailed instructions regarding this function.)
 	// Params:
 	//	 behavior = Pointer to the behavior component.
 	//	 dt = Change in time (in seconds) since the last game loop.
-	void BehaviorUpdate(BehaviorPtr behavior, float dt);
+	void Update(float dt);
 
 } Behavior;
 

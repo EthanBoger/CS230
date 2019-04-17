@@ -14,19 +14,13 @@
 //------------------------------------------------------------------------------
 // Include Files:
 //------------------------------------------------------------------------------
-
+#include <AEexport.h>
+#include "Behavior.h"
 //------------------------------------------------------------------------------
-
-#ifdef __cplusplus
-extern "C" {
-	/* Assume C declarations for C++ */
-#endif
 
 //------------------------------------------------------------------------------
 // Forward References:
 //------------------------------------------------------------------------------
-
-typedef struct Behavior * BehaviorPtr;
 
 //------------------------------------------------------------------------------
 // Public Consts:
@@ -35,6 +29,51 @@ typedef struct Behavior * BehaviorPtr;
 //------------------------------------------------------------------------------
 // Public Structures:
 //------------------------------------------------------------------------------
+class Spaceship : public Behavior
+{
+public:
+	Spaceship();
+	virtual BehaviorPtr Clone(GameObjectPtr parent);
+private:
+	// Main interface with base class.
+	void Init();
+	void Update(float dt);
+	void Exit();
+	
+	// Private const
+private:
+	static const float spaceshipAcceleration;
+	static const float spaceshipSpeedMax;
+	static const float spaceshipTurnRateMax;
+	static const float spaceshipWeaponCooldownTime;
+	static const float spaceshipWeaponBulletSpeed;
+	static const float spaceshipDeathDuration;
+
+	// Private structures
+private:
+	typedef enum FSM
+	{
+		cSpaceshipInvalid,
+		cSpaceshipIdle,
+		cSpaceshipThrust,
+		cSpaceshipDead
+	} SpaceshipFSM;
+
+	// Private functions
+private:
+	void BehaviorSpaceshipUpdateRotation(float dt);
+	void BehaviorSpaceshipUpdateVelocity(float dt);
+	void BehaviorSpaceshipUpdateWeapon(float dt);
+	void BehaviorSpaceshipSpawnBullet();
+	void BehaviorSpaceshipCollisionHandler(GameObjectPtr, GameObjectPtr);
+	void BehaviorSpaceshipDeadAnim(float dt);
+};
+const float Spaceship::spaceshipAcceleration = 150.0f;
+const float Spaceship::spaceshipSpeedMax = 500.0f;
+const float Spaceship::spaceshipTurnRateMax = PI / 1.5f;
+const float Spaceship::spaceshipWeaponCooldownTime = 0.25f;
+const float Spaceship::spaceshipWeaponBulletSpeed = 750.0f;
+const float Spaceship::spaceshipDeathDuration = 3.0f;
 
 //------------------------------------------------------------------------------
 // Public Variables:
@@ -44,33 +83,4 @@ typedef struct Behavior * BehaviorPtr;
 // Public Functions:
 //------------------------------------------------------------------------------
 
-// Dynamically allocate a new (Spaceship) behavior component.
-// (Hint: Use calloc() to ensure that all member variables are initialized to 0.)
-BehaviorPtr BehaviorSpaceshipCreate(void);
-
-// Initialize the current state of the behavior component.
-// (Hint: Refer to the lecture notes on finite state machines (FSM).)
-// Params:
-//	 behavior = Pointer to the behavior component.
-void BehaviorSpaceshipInit(BehaviorPtr behavior);
-
-// Update the current state of the behavior component.
-// (Hint: Refer to the lecture notes on finite state machines (FSM).)
-// Params:
-//	 behavior = Pointer to the behavior component.
-//	 dt = Change in time (in seconds) since the last game loop.
-void BehaviorSpaceshipUpdate(BehaviorPtr behavior, float dt);
-
-// Exit the current state of the behavior component.
-// (Hint: Refer to the lecture notes on finite state machines (FSM).)
-// Params:
-//	 behavior = Pointer to the behavior component.
-//	 dt = Change in time (in seconds) since the last game loop.
-void BehaviorSpaceshipExit(BehaviorPtr behavior);
-
 //------------------------------------------------------------------------------
-
-#ifdef __cplusplus
-}                       /* End of extern "C" { */
-#endif
-

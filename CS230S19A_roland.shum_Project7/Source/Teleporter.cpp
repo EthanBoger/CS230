@@ -56,9 +56,9 @@ void TeleporterUpdateObject(GameObjectPtr gameObject)
 		return;
 
 	// Get the velocity
-	 Vector2D const *velocity = PhysicsGetVelocity(physics);
-	 Vector2D const *position = TransformGetTranslation(transform);
-	 Vector2D transport = { 0,0 };
+	Vector2D const *velocity = physics->getVelocity();
+	Vector2D const *position = transform->getTranslation();
+	Vector2D transport = { 0,0 };
 
 	// Are we moving in the positive x direction?
 	if (velocity->x > 0)
@@ -99,7 +99,7 @@ void TeleporterUpdateObject(GameObjectPtr gameObject)
 	// Do we need to transport the position?
 	if (transport.x != 0 || transport.y != 0)
 	{
-		TransformSetTranslation(transform, &transport);
+		transform->setTranslation(&transport);
 	}
 
 }

@@ -23,23 +23,11 @@
 //------------------------------------------------------------------------------
 // Private Consts:
 //------------------------------------------------------------------------------
-static const float spaceshipAcceleration = 150.0f;
-static const float spaceshipSpeedMax = 500.0f;
-static const float spaceshipTurnRateMax = PI / 1.5f;
-static const float spaceshipWeaponCooldownTime = 0.25f;
-static const float spaceshipWeaponBulletSpeed = 750.0f;
-static const float spaceshipDeathDuration = 3.0f;
 
 //------------------------------------------------------------------------------
 // Private Structures:
 //------------------------------------------------------------------------------
-typedef enum FSM
-{
-	cSpaceshipInvalid,
-	cSpaceshipIdle,
-	cSpaceshipThrust,
-	cSpaceshipDead
-}SpaceshipFSM;
+
 //------------------------------------------------------------------------------
 // Public Variables:
 //------------------------------------------------------------------------------
@@ -51,12 +39,7 @@ typedef enum FSM
 //------------------------------------------------------------------------------
 // Private Function Declarations:
 //------------------------------------------------------------------------------
-static void BehaviorSpaceshipUpdateRotation(BehaviorPtr behavior, float dt);
-static void BehaviorSpaceshipUpdateVelocity(BehaviorPtr behavior, float dt);
-static void BehaviorSpaceshipUpdateWeapon(BehaviorPtr behavior, float dt);
-static void BehaviorSpaceshipSpawnBullet(BehaviorPtr behavior);
-static void BehaviorSpaceshipCollisionHandler(GameObjectPtr, GameObjectPtr);
-static void BehaviorSpaceshipDeadAnim(BehaviorPtr behavior, float dt);
+
 //------------------------------------------------------------------------------
 // Public Functions:
 //------------------------------------------------------------------------------

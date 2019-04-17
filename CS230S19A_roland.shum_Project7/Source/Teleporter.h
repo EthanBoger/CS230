@@ -17,11 +17,6 @@
 
 //------------------------------------------------------------------------------
 
-#ifdef __cplusplus
-extern "C" {
-	/* Assume C declarations for C++ */
-#endif
-
 //------------------------------------------------------------------------------
 // Forward References:
 //------------------------------------------------------------------------------
@@ -50,8 +45,3 @@ typedef struct GameObject * GameObjectPtr;
 void TeleporterUpdateObject(GameObjectPtr gameObject);
 
 //------------------------------------------------------------------------------
-
-#ifdef __cplusplus
-}                       /* End of extern "C" { */
-#endif
-

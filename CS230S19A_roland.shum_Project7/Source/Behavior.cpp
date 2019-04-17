@@ -67,26 +67,22 @@
 //  // Return
 //  return clone;
 //}
+Behavior::Behavior(BehaviorFunctionPtr init, BehaviorFunctionPtrDt update, BehaviorFunctionPtr exit, int curr, int next, GameObjectPtr parent)
+	: onInit(init), onUpdate(update), onExit(exit), stateCurr(curr), stateNext(next), parent(parent)
+{
+
+}
 
 // Free the memory associated with a behavior component.
 // (Also, set the behavior pointer to NULL.)
 // Params:
 //	 behavior = Pointer to the behavior component.
-
-void BehaviorFree(BehaviorPtr * behavior)
+Behavior::~Behavior()
 {
-	if (*behavior == NULL)
-		return;
-
-  // Run the exit function if it has one.
-  if ((*behavior)->onExit)
-  {
-    (*behavior)->onExit(*behavior);
-  }
-
-  // Free the mem and set to NULL
-  free(*behavior);
-  *behavior = NULL;
+	if (onExit)
+	{
+		onExit();
+	}
 }
 
 // Update the behavior component.
@@ -94,35 +90,31 @@ void BehaviorFree(BehaviorPtr * behavior)
 // Params:
 //	 behavior = Pointer to the behavior component.
 //	 dt = Change in time (in seconds) since the last game loop.
-void BehaviorUpdate(BehaviorPtr behavior, float dt)
+void Behavior::Update(float dt)
 {
-  // Validate pointer
-  if (behavior == NULL)
-    return;
-
   // We are changing states if this is true.
-  if (behavior->stateCurr != behavior->stateNext)
+  if (this->stateCurr != this->stateNext)
   {
-    /* Exit the behavior if the function exists. */
-    if (behavior->onExit)
+    /* Exit the this if the function exists. */
+    if (this->onExit)
     {
-      behavior->onExit(behavior);
+      this->onExit();
     }
 
     // Set the current state.
-    behavior->stateCurr = behavior->stateNext;
+    this->stateCurr = this->stateNext;
 
-    // Run the init behavior if it has one.
-    if (behavior->onInit)
+    // Run the init this if it has one.
+    if (this->onInit)
     {
-      behavior->onInit(behavior);
+      this->onInit();
     }
   }
 
   // Run the update function if it has one
-  if (behavior->onUpdate)
+  if (this->onUpdate)
   {
-    behavior->onUpdate(behavior, dt);
+    this->onUpdate(dt);
   }
 }
 
