@@ -20,6 +20,7 @@
     <ClInclude Include="Source\Collider.h" />
     <ClInclude Include="Source\ColliderCircle.h" />
     <ClInclude Include="Source\ColliderLine.h" />
+    <ClInclude Include="Source\Component.h" />
     <ClInclude Include="Source\Engine.h" />
     <ClInclude Include="Source\ScoreSystem.h" />
     <ClInclude Include="Source\GameObject.h" />
@@ -57,6 +58,7 @@
     <ClCompile Include="Source\Collider.cpp" />
     <ClCompile Include="Source\ColliderCircle.cpp" />
     <ClCompile Include="Source\ColliderLine.cpp" />
+    <ClCompile Include="Source\Component.cpp" />
     <ClCompile Include="Source\Engine.cpp" />
     <ClCompile Include="Source\GameObject.cpp" />
     <ClCompile Include="Source\GameObjectFactory.cpp" />
@@ -130,13 +132,15 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <PrecompiledHeader>Create</PrecompiledHeader>
-      <WarningLevel>Level4</WarningLevel>
+      <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <CompileAs>CompileAsCpp</CompileAs>
       <TreatWarningAsError>true</TreatWarningAsError>
       <AdditionalIncludeDirectories />
+      <DisableSpecificWarnings>4458</DisableSpecificWarnings>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

@@ -23,7 +23,9 @@
 //------------------------------------------------------------------------------
 // Private Consts:
 //------------------------------------------------------------------------------
-
+const float BehaviorAsteroid::asteroidSpeedMin = 50.0f;
+const float BehaviorAsteroid::asteroidSpeedMax = 100.0f;
+const float BehaviorAsteroid::asteroidSpawnOffset = 10.0f;
 //------------------------------------------------------------------------------
 // Private Structures:
 //------------------------------------------------------------------------------
@@ -48,16 +50,16 @@
 // Dynamically allocate a new (Asteroid) behavior component.
 // (Hint: Use calloc() to ensure that all member variables are initialized to 0.)
 BehaviorAsteroid::BehaviorAsteroid(GameObjectPtr parent) : Behavior((int)cAsteroidInvalid,
-	(int)cAsteroidIdle, parent)
+	(int)cAsteroidIdle, parent), size(cAsteroidLarge)
 {
-
+	OnInit();
 }
 
 // Initialize the current state of the behavior component.
 // (Hint: Refer to the lecture notes on finite state machines (FSM).)
 // Params:
 //	 behavior = Pointer to the behavior component.
-void BehaviorAsteroid::Init()
+void BehaviorAsteroid::OnInit()
 {
 	if (this->stateCurr == cAsteroidIdle)
 	{
@@ -73,10 +75,11 @@ void BehaviorAsteroid::Init()
 	}
 }
 
-BehaviorPtr BehaviorAsteroid::Clone(GameObjectPtr parent)
+BehaviorPtr BehaviorAsteroid::Clone(GameObjectPtr parent_l)
 {
 	BehaviorAsteroidPtr newAsteroird = new BehaviorAsteroid(*this);
-	newAsteroird->parent = parent;
+	newAsteroird->parent = parent_l;
+	OnInit();
 	return newAsteroird;
 }
 
@@ -85,7 +88,7 @@ BehaviorPtr BehaviorAsteroid::Clone(GameObjectPtr parent)
 // Params:
 //	 behavior = Pointer to the behavior component.
 //	 dt = Change in time (in seconds) since the last game loop.
-void BehaviorAsteroid::Update(float dt)
+void BehaviorAsteroid::OnUpdate(float dt)
 {
 	UNREFERENCED_PARAMETER(dt);
 	switch (this->stateCurr)
@@ -104,7 +107,7 @@ void BehaviorAsteroid::Update(float dt)
 // Params:
 //	 behavior = Pointer to the behavior component.
 //	 dt = Change in time (in seconds) since the last game loop.
-void BehaviorAsteroid::Exit()
+void BehaviorAsteroid::OnExit()
 {
 }
 

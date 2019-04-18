@@ -83,11 +83,11 @@ Animation::~Animation()
 //	 frameCount = The number of frames in the sequence.
 //	 frameDuration = The amount of time to wait between frames (in seconds).
 //	 isLooping = True if the animation loops, false otherwise.
-void Animation::Play(int frameCount, float frameDuration, bool isLooping)
+void Animation::Play(int frameCount_l, float frameDuration_l, bool isLooping_l)
 {
-  this->frameCount = frameCount;
-  this->frameDuration = frameDuration;
-  this->isLooping = isLooping;
+  this->frameCount = frameCount_l;
+  this->frameDuration = frameDuration_l;
+  this->isLooping = isLooping_l;
   
   this->isRunning = true;
   this->isDone = false;

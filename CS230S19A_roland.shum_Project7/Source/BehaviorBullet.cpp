@@ -18,7 +18,9 @@
 //------------------------------------------------------------------------------
 // Private Consts:
 //------------------------------------------------------------------------------
-
+const float BehaviorBullet::bulletSpeedMax = 500.0f;
+// Maximum lifetime of a bullet (in seconds).
+const float BehaviorBullet::bulletLifeTimeMax = 3.0f;
 //------------------------------------------------------------------------------
 // Public Variables:
 //------------------------------------------------------------------------------
@@ -39,12 +41,14 @@ BehaviorBullet::BehaviorBullet(GameObjectPtr parent) : Behavior((int)cBulletInva
 	parent)
 {
 	this->timer = bulletLifeTimeMax;
+	OnInit();
 }
 
-BehaviorPtr BehaviorBullet::Clone(GameObjectPtr parent)
+BehaviorPtr BehaviorBullet::Clone(GameObjectPtr parent_l)
 {
 	BehaviorBulletPtr newbullet = new BehaviorBullet(*this);
-	newbullet->parent = parent;
+	newbullet->parent = parent_l;
+	OnInit();
 	return newbullet;
 }
 
@@ -52,7 +56,7 @@ BehaviorPtr BehaviorBullet::Clone(GameObjectPtr parent)
 // (Hint: Refer to the lecture notes on finite state machines (FSM).)
 // Params:
 //	 behavior = Pointer to the behavior component.
-void BehaviorBullet::Init()
+void BehaviorBullet::OnInit()
 {
 	if (this->stateCurr == cBulletIdle)
 	{
@@ -69,7 +73,7 @@ void BehaviorBullet::Init()
 // Params:
 //	 behavior = Pointer to the behavior component.
 //	 dt = Change in time (in seconds) since the last game loop.
-void BehaviorBullet::Update(float dt)
+void BehaviorBullet::OnUpdate(float dt)
 {
 	switch (this->stateCurr)
 	{
@@ -87,7 +91,7 @@ void BehaviorBullet::Update(float dt)
 // Params:
 //	 behavior = Pointer to the behavior component.
 //	 dt = Change in time (in seconds) since the last game loop.
-void BehaviorBullet::Exit()
+void BehaviorBullet::OnExit()
 {
 }
 
@@ -117,7 +121,7 @@ void BehaviorBullet::CollisionHandler(GameObjectPtr objA, GameObjectPtr objB)
 	// If both objects are valid.
 	if (objA != NULL && objB != NULL)
 	{
-		if (strcmp(objB->getName, "Asteroid") == 0)
+		if (strcmp(objB->getName(), "Asteroid") == 0)
 		{
 			objA->Destroy();
 		}

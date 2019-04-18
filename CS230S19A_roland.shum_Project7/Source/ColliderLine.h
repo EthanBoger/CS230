@@ -12,6 +12,7 @@
 #pragma once
 #include "stdafx.h"
 #include "Collider.h"
+#include "Vector2D.h"
 //------------------------------------------------------------------------------
 // Include Files:
 //------------------------------------------------------------------------------
@@ -22,8 +23,8 @@
 // Forward References:
 //------------------------------------------------------------------------------
 
-typedef struct Vector2D	Vector2D;
-
+typedef class ColliderLine* ColliderLinePtr;
+typedef class ColliderCircle* ColliderCirclePtr;
 //------------------------------------------------------------------------------
 // Public Consts:
 //------------------------------------------------------------------------------
@@ -39,7 +40,7 @@ typedef struct ColliderLineSegment
 	Vector2D	point[2];
 } ColliderLineSegment;
 
-typedef struct ColliderLine : public Collider
+class ColliderLine : public Collider
 {
 private:
 	static const int cLineSegmentMax = 100;
@@ -78,7 +79,7 @@ private:
 	static CollisionData CaclCollisionResponse(Vector2D const *circlePosition, Vector2D const *velocity,
 		ColliderLineSegment const *segment, Vector2D const *collisionPoint);
 
-} ColliderLine, *ColliderLinePtr;
+};
 
 
 //------------------------------------------------------------------------------

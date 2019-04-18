@@ -84,7 +84,7 @@ void MeshRender(AEGfxVertexList * mesh, SpriteSource * spriteSource, Matrix2D * 
 	spriteSource->getUV(frameIndex, &u, &v);
 
     /* Set the texture. */
-    AEGfxTextureSet(spriteSource->getTexture, u, v);
+    AEGfxTextureSet(spriteSource->getTexture(), u, v);
   }
 
   /* Set the scale, translation, and rotation in the world. */

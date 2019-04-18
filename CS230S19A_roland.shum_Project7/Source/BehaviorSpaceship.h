@@ -36,9 +36,9 @@ public:
 	virtual BehaviorPtr Clone(GameObjectPtr parent);
 private:
 	// Main interface with base class.
-	virtual void Init();
-	virtual void Update(float dt);
-	virtual void Exit();
+	virtual void OnInit();
+	virtual void OnUpdate(float dt);
+	virtual void OnExit();
 	
 	// Private const
 private:
@@ -68,12 +68,6 @@ private:
 	static void CollisionHandler(GameObjectPtr, GameObjectPtr);
 	void DeadAnim(float dt);
 };
-const float Spaceship::spaceshipAcceleration = 150.0f;
-const float Spaceship::spaceshipSpeedMax = 500.0f;
-const float Spaceship::spaceshipTurnRateMax = PI / 1.5f;
-const float Spaceship::spaceshipWeaponCooldownTime = 0.25f;
-const float Spaceship::spaceshipWeaponBulletSpeed = 750.0f;
-const float Spaceship::spaceshipDeathDuration = 3.0f;
 
 //------------------------------------------------------------------------------
 // Public Variables:

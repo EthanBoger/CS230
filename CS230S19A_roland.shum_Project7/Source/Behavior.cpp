@@ -36,17 +36,11 @@
 // Public Functions:
 //------------------------------------------------------------------------------
 //
-Behavior::Behavior(int curr, int next, GameObjectPtr parent) : stateCurr(curr), stateNext(next),
-	parent(parent), onInit(Init), onUpdate(Update), onExit(Exit)
+Behavior::Behavior(int curr, int next, GameObjectPtr parent) : stateCurr(curr), stateNext(next), 
+	Component(TypeEnum::Behavior, parent)
 {
-
 }
 
-Behavior::Behavior(BehaviorFunctionPtr init, BehaviorFunctionPtrDt update, BehaviorFunctionPtr exit, int curr, int next, GameObjectPtr parent)
-	: onInit(init), onUpdate(update), onExit(exit), stateCurr(curr), stateNext(next), parent(parent)
-{
-
-}
 
 // Free the memory associated with a behavior component.
 // (Also, set the behavior pointer to NULL.)
@@ -54,10 +48,7 @@ Behavior::Behavior(BehaviorFunctionPtr init, BehaviorFunctionPtrDt update, Behav
 //	 behavior = Pointer to the behavior component.
 Behavior::~Behavior()
 {
-	if (onExit)
-	{
-		onExit();
-	}
+	//this->Exit();
 }
 
 // Update the behavior component.
@@ -65,34 +56,30 @@ Behavior::~Behavior()
 // Params:
 //	 behavior = Pointer to the behavior component.
 //	 dt = Change in time (in seconds) since the last game loop.
-void Behavior::UpdateBehavior(float dt)
+void Behavior::Update(float dt)
 {
   // We are changing states if this is true.
   if (this->stateCurr != this->stateNext)
   {
     /* Exit the this if the function exists. */
-    if (this->onExit)
-    {
-      this->onExit();
-    }
+    this->OnExit();
 
     // Set the current state.
     this->stateCurr = this->stateNext;
 
     // Run the init this if it has one.
-    if (this->onInit)
-    {
-      this->onInit();
-    }
+   this->OnInit();
   }
 
   // Run the update function if it has one
-  if (this->onUpdate)
-  {
-    this->onUpdate(dt);
-  }
+  this->Update(dt);
+
 }
 
+void Behavior::Draw()
+{
+
+}
 //------------------------------------------------------------------------------
 // Private Functions:
 //------------------------------------------------------------------------------

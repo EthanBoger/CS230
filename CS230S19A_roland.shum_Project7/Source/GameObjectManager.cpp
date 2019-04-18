@@ -43,7 +43,7 @@ GameObjectManager::GameObjectManager() : objectMax(objectListSize), objectCount(
 
 GameObjectManager::~GameObjectManager()
 {
-	for (int i = 0; i < objectMax; i++)
+	for (unsigned i = 0; i < objectMax; i++)
 	{
 		// If not null
 		if (objectList[i] != NULL)
@@ -68,7 +68,7 @@ GameObjectManagers::~GameObjectManagers()
 //	 dt = Change in time (in seconds) since the last game loop.
 void GameObjectManagers::Update(float dt)
 {
-  for (int i = 0; i < gameObjectActiveList.objectMax; i++)
+  for (unsigned i = 0; i < gameObjectActiveList.objectMax; i++)
   {
     // If not null
     if (gameObjectActiveList.objectList[i] != NULL)
@@ -79,7 +79,7 @@ void GameObjectManagers::Update(float dt)
   }
 
   // Destroy any marked GOs
-  for (int i = 0; i < gameObjectActiveList.objectMax; i++)
+  for (unsigned i = 0; i < gameObjectActiveList.objectMax; i++)
   {
     // If not null
     if (gameObjectActiveList.objectList[i] != NULL)
@@ -98,7 +98,7 @@ void GameObjectManagers::Update(float dt)
 // Draw all game objects in the active game object list.
 void GameObjectManagers::Draw(void)
 {
-  for (int i = 0; i < gameObjectActiveList.objectMax; i++)
+  for (unsigned i = 0; i < gameObjectActiveList.objectMax; i++)
   {
     // If not null
     if (gameObjectActiveList.objectList[i] != NULL)
@@ -164,14 +164,14 @@ GameObjectPtr GameObjectManagers::GetArchetype(const char * name)
 // Check collisions between all objects held by the game object manager.
 void GameObjectManagers::CheckCollisions(void)
 {
-	for (int i = 0; i < gameObjectActiveList.objectMax; i++)
+	for (unsigned i = 0; i < gameObjectActiveList.objectMax; i++)
 	{
 		if (gameObjectActiveList.objectList[i] != NULL)
 		{
 			ColliderPtr collider1 = gameObjectActiveList.objectList[i]->getCollider();
 			if (collider1 != NULL)
 			{
-				for (int j = 0; j < i; j++)
+				for (unsigned j = 0; j < i; j++)
 				{
 					if (gameObjectActiveList.objectList[j] != NULL)
 					{
@@ -191,28 +191,24 @@ void GameObjectManagers::CheckCollisions(void)
 void GameObjectManagers::UnloadResource()
 {
 	// Destroy any marked GOs
-	for (int i = 0; i < gameObjectActiveList.objectMax; i++)
+	for (unsigned i = 0; i < gameObjectActiveList.objectMax; i++)
 	{
 		// If not null
 		if (gameObjectActiveList.objectList[i] != NULL)
 		{
-			// If marked for destruction
-			if (gameObjectActiveList.objectList[i]->isDestroyed())
-			{
-				// Free and set to NULL.
-				delete gameObjectActiveList.objectList[i];
-				gameObjectActiveList.objectList[i] = NULL;
-			}
+
+			// Free and set to NULL.
+			delete gameObjectActiveList.objectList[i];
+			gameObjectActiveList.objectList[i] = NULL;
+
 		}
 		if (gameObjectArchetypes.objectList[i] != NULL)
 		{
-			// If marked for destruction
-			if (gameObjectArchetypes.objectList[i]->isDestroyed())
-			{
-				// Free and set to NULL.
-				delete gameObjectArchetypes.objectList[i];
-				gameObjectArchetypes.objectList[i] = NULL;
-			}
+
+			// Free and set to NULL.
+			delete gameObjectArchetypes.objectList[i];
+			gameObjectArchetypes.objectList[i] = NULL;
+
 		}
 	}
 }
@@ -222,7 +218,7 @@ void GameObjectManagers::UnloadResource()
 //------------------------------------------------------------------------------
 void GameObjectManagers::AddGameObject(GameObjectPtr *list, GameObjectPtr obj)
 {
-  for (int i = 0; i < gameObjectActiveList.objectMax; i++)
+  for (unsigned i = 0; i < gameObjectActiveList.objectMax; i++)
   {
     if (list[i] == NULL)
     {
@@ -234,7 +230,7 @@ void GameObjectManagers::AddGameObject(GameObjectPtr *list, GameObjectPtr obj)
 
 GameObjectPtr GameObjectManagers::FindGameObjectByName(GameObjectPtr *list, const char * name)
 {
-  for (int i = 0; i < gameObjectActiveList.objectMax; i++)
+  for (unsigned i = 0; i < gameObjectActiveList.objectMax; i++)
   {
     // If the slot is not empty
     if (list[i] != NULL)

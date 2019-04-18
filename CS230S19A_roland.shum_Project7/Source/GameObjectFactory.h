@@ -22,7 +22,9 @@
 //------------------------------------------------------------------------------
 
 typedef struct GameObject *GameObjectPtr;
-
+typedef struct AEGfxVertexList * AEGfxVertexListPtr;
+typedef struct AEGfxTexture * AEGfxVertexTexturePtr;
+typedef struct SpriteSource* SpriteSourcePtr;
 //------------------------------------------------------------------------------
 // Public Consts:
 //------------------------------------------------------------------------------
@@ -46,8 +48,6 @@ public:
 	static void UnloadResources();
 
 private:
-	typedef struct AEGfxVertexList * AEGfxVertexListPtr;
-	typedef struct AEGfxTexture * AEGfxVertexTexturePtr;
 
 	static AEGfxVertexListPtr meshList[GameObjectFactory::GameObjectType::cGameObjectTypeCount];
 	static SpriteSourcePtr spriteSourceList[GameObjectFactory::GameObjectType::cGameObjectTypeCount];
@@ -72,10 +72,6 @@ private:
 	static AEGfxVertexListPtr Create16x6Mesh(void);
 	static AEGfxVertexListPtr CreateUnitSizedMesh(void);
 	static AEGfxVertexListPtr CreateAsteroidMesh(void);
-
-	static AEGfxVertexListPtr GetMesh(GameObjectType objectType);
-	static SpriteSourcePtr CreateSpriteSource(GameObjectType objectType);
-	static SpriteSourcePtr GetSpriteSource(GameObjectType objectType);
 
 };
 

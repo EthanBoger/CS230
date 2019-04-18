@@ -10,7 +10,7 @@
 //------------------------------------------------------------------------------
 
 #pragma once
-
+#include "Component.h"
 //------------------------------------------------------------------------------
 // Include Files:
 //------------------------------------------------------------------------------
@@ -20,7 +20,7 @@
 // Forward References:
 //------------------------------------------------------------------------------
 
-typedef struct Collider * ColliderPtr;
+typedef class Collider * ColliderPtr;
 typedef struct GameObject * GameObjectPtr;
 
 //------------------------------------------------------------------------------
@@ -41,14 +41,11 @@ typedef enum ColliderType
 
 typedef void(*CollisionEventHandler)(GameObjectPtr gameObject1, GameObjectPtr gameObject2);
 
-class Collider
+class Collider : public Component
 {
 protected:
 	Collider(const Collider &other) = default;
 	Collider(ColliderType type);
-
-	// Pointer to the collider's parent game object.
-	GameObjectPtr parent;
 
 	// The type of collider used by this component.
 	// (Currently, Circle or Line).
@@ -57,29 +54,20 @@ protected:
 	// Pointer to a function that handles collisions between two objects.
 	CollisionEventHandler	handler;
 
-	// Dynamically allocate a clone of an existing collider component.
-	// (Hint: Perform a shallow copy of the member variables.)
-	// Params:
-	//	 other = Pointer to the component to be cloned.
-	//   parent = Pointer to the cloned component's parent.
-	// Returns:
-	//	 If 'other' is valid and the memory allocation was successful,
-	//	   then return a pointer to the cloned component,
-	//	   else return NULL.
+	
 
 
 private:
 	static bool IsColliding(ColliderPtr collider1, ColliderPtr collider2);
 public:
+	virtual ~Collider() = default;
 	virtual ColliderPtr Clone(GameObjectPtr parent) = 0;
-	// Set the collision event handler for a collider.
-	// (Hint: This allows other components, such as behaviors, to respond to collision events.)
-	// (Note: It is acceptable for the handler to be NULL.  This allows an existing handler to be removed.)
-	// Params:
-	//	 collider = Pointer to the collider component.
-	//	 handler = Pointer to the collision event handler (may be NULL).
-	void SetCollisionHandler(CollisionEventHandler handler);
+	virtual ColliderPtr Clone(void) const override;
 
+	virtual void Update(float dt) override;
+	virtual void Draw() override;
+
+	void SetCollisionHandler(CollisionEventHandler handler);
 	void SetParent(GameObjectPtr parent);
 
 	// Check if two objects are colliding.
@@ -92,21 +80,6 @@ public:
 	static void Check(ColliderPtr collider, ColliderPtr other);
 };
 
-//typedef struct Collider
-//{
-//	// Pointer to the collider's parent game object.
-//	GameObjectPtr parent;
-//
-//	// The type of collider used by this component.
-//	// (Currently, Circle or Line).
-//	ColliderType type;
-//
-//	// Pointer to a function that handles collisions between two objects.
-//	CollisionEventHandler	handler;
-//
-//	unsigned int	memorySize;
-//
-//} Collider;
 
 //------------------------------------------------------------------------------
 // Public Variables:

@@ -64,9 +64,9 @@ float ColliderCircle::GetRadius()
 // Params:
 //	 collider = Pointer to the circle collider component.
 //   radius = the circle collider's new radius.
-void ColliderCircle::SetRadius(float radius)
+void ColliderCircle::SetRadius(float radius_l)
 {
-	this->radius = radius;
+	this->radius = radius_l;
 }
 
 // Check for collision between two circle colliders.

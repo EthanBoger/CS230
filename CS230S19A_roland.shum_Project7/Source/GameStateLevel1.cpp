@@ -408,17 +408,17 @@ static void GameStateLevel1SetMonkeyState(GameObjectPtr gameObject, MonkeyStates
     case MonkeyIdle:
 		sprite->setMesh(Mesh1x1);
 		sprite->setSpriteSource(monkeySpriteSource[MonkeyIdle]);
-		anim->Play(1.0f, 0.0f, false);
+		anim->Play(1, 0.0f, false);
       break;
     case MonkeyJump:
 		sprite->setMesh(Mesh1x1);
 		sprite->setSpriteSource(monkeySpriteSource[MonkeyJump]);
-		anim->Play(1.0f, 0.0f, false);
+		anim->Play(1, 0.0f, false);
       break;
     case MonkeyWalk:
 		sprite->setMesh(mesh3x3);
 		sprite->setSpriteSource(monkeySpriteSource[MonkeyWalk]);
-		anim->Play(8.0f, 0.05f, false);
+		anim->Play(8, 0.05f, false);
       break;
     default:
         break;

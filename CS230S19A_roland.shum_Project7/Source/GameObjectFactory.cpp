@@ -35,12 +35,13 @@
 //------------------------------------------------------------------------------
 // Private Consts:
 //------------------------------------------------------------------------------
-
+AEGfxVertexListPtr GameObjectFactory::meshList[GameObjectFactory::GameObjectType::cGameObjectTypeCount] = { 0 };
+SpriteSourcePtr GameObjectFactory::spriteSourceList[GameObjectFactory::GameObjectType::cGameObjectTypeCount] = { 0 };
+AEGfxVertexTexturePtr GameObjectFactory::textureList[GameObjectFactory::GameObjectType::cGameObjectTypeCount] = { 0 };
 //------------------------------------------------------------------------------
 // Private Structures:
 //------------------------------------------------------------------------------
-typedef struct AEGfxVertexList * AEGfxVertexListPtr;
-typedef struct AEGfxTexture * AEGfxVertexTexturePtr;
+
 //------------------------------------------------------------------------------
 // Public Variables:
 //------------------------------------------------------------------------------
@@ -302,7 +303,7 @@ GameObjectPtr GameObjectFactory::CreateAsteroid(void)
 
 	BehaviorPtr behavior = new BehaviorAsteroid(newObj);
 	ColliderCirclePtr collider = new ColliderCircle();
-	collider->SetRadius(trans->getScale->x / 2.0f);
+	collider->SetRadius(trans->getScale()->x / 2.0f);
 
 	newObj->addPhysics(physics);
 	newObj->addTransform(trans);
@@ -354,7 +355,7 @@ GameObjectPtr GameObjectFactory::CreateHudText(void)
 	sprite->setMesh(GameObjectFactory::GetMesh(cGameObjectTypeHudText));
 	sprite->setSpriteSource(GameObjectFactory::GetSpriteSource(cGameObjectTypeHudText));
 
-	BehaviorPtr behavior = new BehaviorAsteroid(newObj);
+	BehaviorPtr behavior = new BehaviorHudText(newObj);
 
 	newObj->addTransform(trans);
 	newObj->addSprite(sprite);

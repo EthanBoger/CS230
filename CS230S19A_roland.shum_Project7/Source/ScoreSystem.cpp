@@ -85,7 +85,7 @@ void ScoreSystemIncreaseWaveCount()
 //	 positions = Vector2D array of positions for the HUD Text objects.
 void ScoreSystemCreateHudElements(const Vector2D * positions)
 {
-	GameObjectPtr hud = GameObjectManagerGetArchetype("HUD Text");
+	GameObjectPtr hud = GameObjectManagers::getInstance().GetArchetype("HUD Text");
 
 	if (hud != NULL)
 	{
@@ -103,12 +103,11 @@ void ScoreSystemCreateHudElements(const Vector2D * positions)
 
 static void GameStateAsteroidsCreateHudElement(const GameObjectPtr archetype, const Vector2D * position, const char * formatString, const int * watchValue)
 {
-	GameObjectPtr newObj = GameObjectClone(archetype);
+	GameObjectPtr newObj = new GameObject(*archetype);
 
-	TransformPtr newTransform = GameObjectGetTransform(newObj);
-	TransformSetTranslation(newTransform, position);
+	TransformPtr newTransform = newObj->getTransform();
+	newTransform->setTranslation(position);
 
-	BehaviorHudTextSetDisplay(GameObjectGetBehavior(newObj), formatString, watchValue);
-
-	GameObjectManagerAdd(newObj);
+	dynamic_cast<BehaviorHudTextPtr>(newObj->getBehavior())->SetDisplay(formatString, watchValue);
+	GameObjectManagers::getInstance().Add(newObj);
 }

@@ -34,9 +34,9 @@ public:
 	virtual BehaviorPtr Clone(GameObjectPtr parent);
 private:
 	// Main interface with base class.
-	virtual void Init();
-	virtual void Update(float dt);
-	virtual void Exit();
+	virtual void OnInit();
+	virtual void OnUpdate(float dt);
+	virtual void OnExit();
 
 	// Private const
 private:
@@ -58,9 +58,6 @@ private:
 	void UpdateLifeTimer(float dt);
 	static void CollisionHandler(GameObjectPtr, GameObjectPtr);
 };
-const float BehaviorBullet::bulletSpeedMax = 500.0f;
-// Maximum lifetime of a bullet (in seconds).
-const float BehaviorBullet::bulletLifeTimeMax = 3.0f;
 //------------------------------------------------------------------------------
 // Public Structures:
 //------------------------------------------------------------------------------

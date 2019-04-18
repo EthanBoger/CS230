@@ -49,7 +49,7 @@
 // Public Functions:
 //------------------------------------------------------------------------------
 
-Collider::Collider(ColliderType type) : type(type)
+Collider::Collider(ColliderType type) : type(type), Component(Component::Collider, NULL)
 {
 
 }
@@ -99,20 +99,30 @@ bool Collider::IsColliding(ColliderPtr collider1, ColliderPtr collider2)
 	return false;
 }
 
+void Collider::Update(float dt)
+{
+
+}
+
+void Collider::Draw()
+{
+
+}
+
 // Set the collision event handler for a collider.
 // (Hint: This allows other components, such as behaviors, to respond to collision events.)
 // (Note: It is acceptable for the handler to be NULL.  This allows an existing handler to be removed.)
 // Params:
 //	 collider = Pointer to the collider component.
 //	 handler = Pointer to the collision event handler (may be NULL).
-void Collider::SetCollisionHandler(CollisionEventHandler handler)
+void Collider::SetCollisionHandler(CollisionEventHandler handler_l)
 {
-	this->handler = handler;
+	this->handler = handler_l;
 }
 
-void Collider::SetParent(GameObjectPtr parent)
+void Collider::SetParent(GameObjectPtr parent_l)
 {
-	this->parent = parent;
+	this->parent = parent_l;
 }
 //------------------------------------------------------------------------------
 // Private Functions:

@@ -139,6 +139,9 @@
     <ClCompile Include="Source\ScoreSystem.cpp">
       <Filter>Game</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Component.cpp">
+      <Filter>Engine\GameObjects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\GameStateStub.h">
@@ -243,6 +246,9 @@
     </ClInclude>
     <ClInclude Include="Source\Animation.h">
       <Filter>Engine\GameObjects\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Component.h">
+      <Filter>Engine\GameObjects</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

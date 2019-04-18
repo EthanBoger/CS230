@@ -77,17 +77,14 @@ public:
 	virtual BehaviorPtr Clone(GameObjectPtr parent);
 
 private:
-	void Init();
-	void Update(float dt);
-	void Exit();
+	virtual void OnInit();
+	virtual void OnUpdate(float dt);
+	virtual void OnExit();
 
 	void SetPosition(BehaviorAsteroidPtr);
 	void SetVelocity(BehaviorAsteroidPtr);
 	static void CollisionHandler(GameObjectPtr, GameObjectPtr);
 };
-const float BehaviorAsteroid::asteroidSpeedMin = 50.0f;
-const float BehaviorAsteroid::asteroidSpeedMax = 100.0f;
-const float BehaviorAsteroid::asteroidSpawnOffset = 10.0f;
 //------------------------------------------------------------------------------
 // Public Variables:
 //------------------------------------------------------------------------------

@@ -17,10 +17,6 @@
 
 //------------------------------------------------------------------------------
 
-#ifdef __cplusplus
-extern "C"
-{	/* Assume C declarations for C++ */
-#endif
 
 //------------------------------------------------------------------------------
 // Public Consts:
@@ -82,8 +78,3 @@ void GameStateExecuteShutdown(GameStates gameState);
 void GameStateExecuteUnload(GameStates gameState);
 
 //------------------------------------------------------------------------------
-
-#ifdef __cplusplus
-}                       /* End of extern "C" { */
-#endif
-

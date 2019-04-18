@@ -23,7 +23,12 @@
 //------------------------------------------------------------------------------
 // Private Consts:
 //------------------------------------------------------------------------------
-
+const float Spaceship::spaceshipAcceleration = 150.0f;
+const float Spaceship::spaceshipSpeedMax = 500.0f;
+const float Spaceship::spaceshipTurnRateMax = PI / 1.5f;
+const float Spaceship::spaceshipWeaponCooldownTime = 0.25f;
+const float Spaceship::spaceshipWeaponBulletSpeed = 750.0f;
+const float Spaceship::spaceshipDeathDuration = 3.0f;
 //------------------------------------------------------------------------------
 // Private Structures:
 //------------------------------------------------------------------------------
@@ -50,13 +55,14 @@
 
 Spaceship::Spaceship(GameObjectPtr parent) : Behavior((int)cSpaceshipInvalid, (int)cSpaceshipIdle, parent)
 {
-	
+	OnInit();
 }
 
-BehaviorPtr Spaceship::Clone(GameObjectPtr parent)
+BehaviorPtr Spaceship::Clone(GameObjectPtr parent_l)
 {
 	SpaceshipPtr newAsteroird = new Spaceship(*this);
-	newAsteroird->parent = parent;
+	newAsteroird->parent = parent_l;
+	OnInit();
 	return newAsteroird;
 }
 
@@ -65,7 +71,7 @@ BehaviorPtr Spaceship::Clone(GameObjectPtr parent)
 // (Hint: Refer to the lecture notes on finite state machines (FSM).)
 // Params:
 //	 behavior = Pointer to the behavior component.
-void Spaceship::Init()
+void Spaceship::OnInit()
 {
 	if (this->stateCurr == cSpaceshipIdle)
 	{
@@ -83,7 +89,7 @@ void Spaceship::Init()
 // Params:
 //	 behavior = Pointer to the behavior component.
 //	 dt = Change in time (in seconds) since the last game loop.
-void Spaceship::Update(float dt)
+void Spaceship::OnUpdate(float dt)
 {
 	switch (this->stateCurr)
 	{
@@ -121,7 +127,7 @@ void Spaceship::Update(float dt)
 // Params:
 //	 behavior = Pointer to the behavior component.
 //	 dt = Change in time (in seconds) since the last game loop.
-void Spaceship::Exit()
+void Spaceship::OnExit()
 {
 }
 

@@ -45,7 +45,8 @@
 //	 If the memory allocation was successful,
 //	   then return a pointer to the allocated memory,
 //	   else return NULL.
-GameObject::GameObject(const char *name) : name(name)
+GameObject::GameObject(const char *name) : name(name), animation(NULL), behavior(NULL),
+collider(NULL), physics(NULL), sprite(NULL), transform(NULL), isDestroyedp(0)
 {
 
 }
@@ -59,20 +60,26 @@ GameObject::GameObject(const char *name) : name(name)
 //	 If 'other' is valid and the memory allocation was successful,
 //	   then return a pointer to the cloned object,
 //	   else return NULL.
-GameObject::GameObject(const GameObject &copy)
+GameObject::GameObject(const GameObject &copy) :name(copy.name), animation(NULL), behavior(NULL),
+collider(NULL), physics(NULL), sprite(NULL), transform(NULL), isDestroyedp(copy.isDestroyedp)
 {
   // Clone the gameobject.
-	this->name = copy.name;
-	this->isDestroyed = copy.isDestroyed;
+
 	
 
   // Clone the components and set them.
-	this->behavior = copy.behavior->Clone(this);
-	this->sprite = new Sprite(*copy.sprite);
-	this->animation = new Animation(*copy.animation);
-	this->physics = new Physics(*copy.physics);
-	this->transform = new Transform(*copy.transform);
-	this->collider = copy.collider->Clone(this);
+	if(copy.behavior != NULL)
+		this->behavior = copy.behavior->Clone(this);
+	if(copy.sprite != NULL)
+		this->sprite = new Sprite(*copy.sprite);
+	if(copy.animation != NULL)
+		this->animation = new Animation(*copy.animation);
+	if(copy.physics != NULL)
+		this->physics = new Physics(*copy.physics);
+	if(copy.transform != NULL)
+		this->transform = new Transform(*copy.transform);
+	if(copy.collider != NULL)
+		this->collider = copy.collider->Clone(this);
 
   //result->behavior = BehaviorClone(other->behavior, result);
   //result->sprite = SpriteClone(other->sprite);
@@ -105,7 +112,7 @@ void GameObject::Destroy()
 //	   else return false.
 bool GameObject::isDestroyed()
 {
-	this->isDestroyedp;
+	return this->isDestroyedp;
 }
 
 // Free the memory associated with a game object, including all components.
@@ -167,7 +174,7 @@ void GameObject::addBehavior(BehaviorPtr behavior)
 {
     // Set the behavior
     this->behavior = behavior;
-	GameObject *thisPtr(this);
+	//GameObject *thisPtr(this);
 	// Set the parent
     //behavior->parent = GameObjectSPtr(thisPtr);
 }

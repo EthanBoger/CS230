@@ -31,7 +31,7 @@
 typedef class ColliderCircle* ColliderCirclePtr;
 // An example of the structure to be defined in ColliderCircle.c.
 
-struct ColliderCircle : public Collider
+class ColliderCircle : public Collider
 {
 public:
 	ColliderCircle();

@@ -11,6 +11,7 @@
 
 #pragma once
 #include <functional>
+#include "Component.h"
 //------------------------------------------------------------------------------
 // Include Files:
 //------------------------------------------------------------------------------
@@ -34,21 +35,19 @@ typedef struct GameObject * GameObjectPtr;
 
 typedef struct Behavior * BehaviorPtr;
 
-//typedef void(Behavior::*BehaviorFunctionPtr)();
-//typedef void(Behavior::*BehaviorFunctionPtrDt)(float dt);
+typedef void(Behavior::*BehaviorFunctionPtr)();
+typedef void(Behavior::*BehaviorFunctionPtrDt)(float dt);
 
-typedef std::function<void()> BehaviorFunctionPtr;
-typedef std::function<void(float)> BehaviorFunctionPtrDt;
+//typedef std::function<void(Behavior&)> BehaviorFunctionPtr;
+//typedef std::function<void(float)> BehaviorFunctionPtrDt;
 
 // This structure is being declared publicly, as it will be used to implement
 // pseudo-inheritance in Project 5.
 // NOTE: You are not allowed to change the contents of this structure, as it is
 // part of the public interface.
-typedef struct Behavior
+typedef struct Behavior : public Component
 {
 protected:
-	// Pointer to the behavior's parent game object.
-	GameObjectPtr parent;
 
 	// Behavior Finite-State Machine (FSM) state variables.
 	int stateCurr;
@@ -56,14 +55,9 @@ protected:
 
 	friend class Spaceship;
 
-		// Behavior Finite-State Machine (FSM) function pointers.
-	BehaviorFunctionPtr		onInit;
-	BehaviorFunctionPtrDt	onUpdate;
-	BehaviorFunctionPtr		onExit;
-
-	virtual void Init() = 0;
-	virtual void Update(float dt) = 0;
-	virtual void Exit() = 0;
+	virtual void OnExit() = 0;
+	virtual void OnInit() = 0;
+	virtual void OnUpdate(float dt) = 0;
 
 	// Additional variables shared by all behaviors.
 	// NOTE: Variables that are unique to a specific behavior should not be placed here.
@@ -84,16 +78,17 @@ public:
 	//	   else return NULL.
 	virtual BehaviorPtr Clone(GameObjectPtr parent) = 0;
 	Behavior(const Behavior& other) = default;
-	Behavior(BehaviorFunctionPtr init, BehaviorFunctionPtrDt update, BehaviorFunctionPtr exit, int curr, int next, GameObjectPtr parent);
 	Behavior(int curr, int next, GameObjectPtr parent);
-	~Behavior();
+	virtual ~Behavior();
+
+	virtual void Draw();
 
 	// Update the behavior component.
 	// (Hint: Refer to the Word document for detailed instructions regarding this function.)
 	// Params:
 	//	 behavior = Pointer to the behavior component.
 	//	 dt = Change in time (in seconds) since the last game loop.
-	void UpdateBehavior(float dt);
+	void Update(float dt) override;
 
 } Behavior;
 

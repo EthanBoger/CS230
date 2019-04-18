@@ -66,9 +66,9 @@ private:
 	int displayValue;
 
 private:
-	virtual void Init();
-	virtual void Update(float dt);
-	virtual void Exit();
+	virtual void OnInit();
+	virtual void OnUpdate(float dt);
+	virtual void OnExit();
 
 	void UpdateText();
 
@@ -81,6 +81,7 @@ public:
 //	 formatString = Pointer for the string used to format the display text.
 //	 watchValue = Pointer to the float value to be displayed.
 	void SetDisplay(const char * formatString, const int * watchValue);
+	virtual BehaviorPtr Clone(GameObjectPtr parent_l);
 
 
 } BehaviorHudText, *BehaviorHudTextPtr;

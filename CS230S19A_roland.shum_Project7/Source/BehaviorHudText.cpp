@@ -42,9 +42,17 @@
 // (Hint: Use calloc() to ensure that all member variables are initialized to 0.)
 
 BehaviorHudText::BehaviorHudText(GameObjectPtr parent) : Behavior((int)cHudTextInvalid,
-	(int)cHudTextIdle, parent)
+	(int)cHudTextIdle, parent), watchValue(NULL)
 {
+	OnInit();
+}
 
+BehaviorPtr BehaviorHudText::Clone(GameObjectPtr parent_l)
+{
+	BehaviorHudTextPtr newAsteroird = new BehaviorHudText(*this);
+	newAsteroird->parent = parent_l;
+	OnInit();
+	return newAsteroird;
 }
 
 // Set the display characteristics of the HUD Text object.
@@ -53,17 +61,17 @@ BehaviorHudText::BehaviorHudText(GameObjectPtr parent) : Behavior((int)cHudTextI
 //	 behavior = Pointer to the behavior component.
 //	 formatString = Pointer for the string used to format the display text.
 //	 watchValue = Pointer to the float value to be displayed.
-void BehaviorHudText::SetDisplay(const char * formatString, const int * watchValue)
+void BehaviorHudText::SetDisplay(const char * formatString_l, const int * watchValue_l)
 {
-	this->formatString = formatString;
-	this->watchValue = watchValue;
+	this->formatString = formatString_l;
+	this->watchValue = watchValue_l;
 }
 
 // Initialize the current state of the behavior component.
 // (Hint: Refer to the lecture notes on finite state machines (FSM).)
 // Params:
 //	 behavior = Pointer to the behavior component.
-void BehaviorHudText::Init()
+void BehaviorHudText::OnInit()
 {
 	SpritePtr sprite = this->parent->getSprite();
 
@@ -79,7 +87,7 @@ void BehaviorHudText::Init()
 // Params:
 //	 behavior = Pointer to the behavior component.
 //	 dt = Change in time (in seconds) since the last game loop.
-void BehaviorHudText::Update(float dt)
+void BehaviorHudText::OnUpdate(float dt)
 {
 	UNREFERENCED_PARAMETER(dt);
 	if (this->watchValue != NULL)
@@ -93,7 +101,7 @@ void BehaviorHudText::Update(float dt)
 // Params:
 //	 behavior = Pointer to the behavior component.
 //	 dt = Change in time (in seconds) since the last game loop.
-void BehaviorHudText::Exit()
+void BehaviorHudText::OnExit()
 {
 }
 

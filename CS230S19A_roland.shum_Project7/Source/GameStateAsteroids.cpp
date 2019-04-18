@@ -56,10 +56,10 @@ static void GameStateAsteroidsSpawnAsteroid(void);
 void GameStateAsteroidsInit()
 {
 	// Add one type of each object into the archetype
-	GameObjectManagerAdd(GameObjectFactoryCreate(cGameObjectTypeSpaceship));
-	GameObjectManagerAddArchetype(GameObjectFactoryCreate(cGameObjectTypeAsteroid));
-	GameObjectManagerAddArchetype(GameObjectFactoryCreate(cGameObjectTypeBullet));
-	GameObjectManagerAddArchetype(GameObjectFactoryCreate(cGameObjectTypeHudText));
+	GameObjectManagers::getInstance().Add(GameObjectFactory::Create(GameObjectFactory::cGameObjectTypeSpaceship));
+	GameObjectManagers::getInstance().AddArchetype(GameObjectFactory::Create(GameObjectFactory::cGameObjectTypeAsteroid));
+	GameObjectManagers::getInstance().AddArchetype(GameObjectFactory::Create(GameObjectFactory::cGameObjectTypeBullet));
+	GameObjectManagers::getInstance().AddArchetype(GameObjectFactory::Create(GameObjectFactory::cGameObjectTypeHudText));
 	GameStateAsteroidsCreateHudElements();
 
 	asteroidSpawnCount = cAsteroidSpawnInitial;
@@ -102,7 +102,7 @@ void GameStateAsteroidsUpdate(float dt)
   {
 	  GameStateManagerSetNextState(GsOmega);
   }
-  if (GameObjectManagerGetObjectByName("Asteroid") == NULL)
+  if (GameObjectManagers::getInstance().GetObjectByName("Asteroid") == NULL)
   {
 	  GameStateAsteroidsSpawnAsteroidWave();
   }
@@ -111,12 +111,12 @@ void GameStateAsteroidsUpdate(float dt)
 // Shutdown the ...
 void GameStateAsteroidsShutdown()
 {
-	GameObjectManagerShutdown();
+	GameObjectManagers::getInstance().UnloadResource();
 }
 
 void GameStateAsteroidsUnload()
 {
-	GameObjectFactoryUnloadResources();
+	GameObjectFactory::UnloadResources();
 }
 
 
@@ -151,7 +151,7 @@ static void GameStateAsteroidsSpawnAsteroidWave(void)
 
 static void GameStateAsteroidsSpawnAsteroid(void)
 {
-	GameObjectPtr obj = GameObjectManagerGetArchetype("Asteroid");
-	GameObjectPtr clone = GameObjectClone(obj);
-	GameObjectManagerAdd(clone);
+	GameObjectPtr obj = GameObjectManagers::getInstance().GetArchetype("Asteroid");
+	GameObjectPtr clone = new GameObject(*obj);
+	GameObjectManagers::getInstance().Add(clone);
 }
