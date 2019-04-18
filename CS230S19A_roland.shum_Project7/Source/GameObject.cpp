@@ -67,12 +67,19 @@ GameObject::GameObject(const GameObject &copy)
 	
 
   // Clone the components and set them.
-  result->behavior = BehaviorClone(other->behavior, result);
-  result->sprite = SpriteClone(other->sprite);
-  result->animation = AnimationClone(other->animation, result->sprite);
-  result->physics = PhysicsClone(other->physics);
-  result->transform = TransformClone(other->transform);
-  result->collider = ColliderClone(other->collider, result);
+	this->behavior = copy.behavior->Clone(this);
+	this->sprite = new Sprite(*copy.sprite);
+	this->animation = new Animation(*copy.animation);
+	this->physics = new Physics(*copy.physics);
+	this->transform = new Transform(*copy.transform);
+	this->collider = copy.collider->Clone(this);
+
+  //result->behavior = BehaviorClone(other->behavior, result);
+  //result->sprite = SpriteClone(other->sprite);
+  //result->animation = AnimationClone(other->animation, result->sprite);
+  //result->physics = PhysicsClone(other->physics);
+  //result->transform = TransformClone(other->transform);
+  //result->collider = ColliderClone(other->collider, result);
 
 }
 
@@ -86,7 +93,7 @@ GameObject::GameObject(const GameObject &copy)
 //	   else bail.
 void GameObject::Destroy()
 {
-	this->isDestroyed = true;
+	this->isDestroyedp = true;
 }
 
 // Check whether a game object has been flagged for destruction.
@@ -98,7 +105,7 @@ void GameObject::Destroy()
 //	   else return false.
 bool GameObject::isDestroyed()
 {
-	this->isDestroyed;
+	this->isDestroyedp;
 }
 
 // Free the memory associated with a game object, including all components.
@@ -110,30 +117,9 @@ GameObject::~GameObject()
 	delete this->physics;
 	delete this->sprite;
 	delete this->transform;
+	delete this->animation;
 	delete this->collider;
 	delete this->behavior;
-
-  /* Free the individual components. */
-  PhysicsPtr physics = GameObjectGetPhysics(*gameObject);
-  PhysicsFree(&physics);
-
-  SpritePtr sprite = GameObjectGetSprite(*gameObject);
-  SpriteFree(&sprite);
-
-  TransformPtr transform = GameObjectGetTransform(*gameObject);
-  TransformFree(&transform);
-
-  AnimationPtr animation = GameObjectGetAnimation(*gameObject);
-  AnimationFree(&animation);
-
-  ColliderPtr collider = GameObjectGetCollider(*gameObject);
-  ColliderFree(&collider);
-
-  BehaviorPtr behavior = GameObjectGetBehavior(*gameObject);
-  BehaviorFree(&behavior);
-
-  free(*gameObject);
-  *gameObject = NULL;
 }
 
 // Attach a physics component to a game object.
@@ -183,7 +169,7 @@ void GameObject::addBehavior(BehaviorPtr behavior)
     this->behavior = behavior;
 	GameObject *thisPtr(this);
 	// Set the parent
-    behavior->parent = GameObjectSPtr(thisPtr);
+    //behavior->parent = GameObjectSPtr(thisPtr);
 }
 
 // Attach a collider component to a game object.
@@ -192,8 +178,10 @@ void GameObject::addBehavior(BehaviorPtr behavior)
 //   collider = Pointer to the collider component to be attached.
 void GameObject::addCollider(ColliderPtr collider)
 {
-	collider->parent = gameObject;
-	gameObject->collider = collider;
+	this->collider = collider;
+	collider->SetParent(this);
+	//collider->parent = gameObject;
+	//gameObject->collider = collider;
 }
 
 // Get the physics component attached to a game object.
@@ -309,17 +297,17 @@ void GameObject::Update(float dt)
 {
     if (this->physics != NULL)
     {
-      PhysicsUpdate(gameObject->transform, dt);
+		this->physics->Update(this->transform, dt);
     }
 
     if (this->animation != NULL)
     {
-      AnimationUpdate(dt);
+		this->animation->Update(dt);
     }
 
     if (this->behavior != NULL)
     {
-      BehaviorUpdate(dt);
+		this->behavior->UpdateBehavior(dt);
     }
 }
 
@@ -333,6 +321,6 @@ void GameObject::Draw() const
   /* Check if game object is null or its sprite. */
   if (this->sprite != NULL)
   {
-    SpriteDraw(gameObject->sprite, gameObject->transform);
+	  sprite->Draw(this->transform);
   }
 }

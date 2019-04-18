@@ -81,7 +81,7 @@ bool Collider::IsColliding(ColliderPtr collider1, ColliderPtr collider2)
 {
 	if (collider1->type == ColliderTypeCircle && collider2->type == ColliderTypeCircle)
 	{
-		return ColliderCircle::CircleIsCollidingWithCircle(collider1, collider2);
+		return ColliderCircle::CircleIsCollidingWithCircle(dynamic_cast<ColliderCirclePtr>(collider1), dynamic_cast<ColliderCirclePtr>(collider2));
 	}
 	else if (collider1->type == ColliderTypeLine && collider2->type == ColliderTypeLine)
 	{
@@ -90,11 +90,11 @@ bool Collider::IsColliding(ColliderPtr collider1, ColliderPtr collider2)
 	// This and the last condition are the same, except swapped around.
 	else if (collider1->type == ColliderTypeLine && collider2->type == ColliderTypeCircle)
 	{
-		return ColliderLine::LineIsCollidingWithCircle(static_cast<ColliderLinePtr>(collider1), collider2);
+		return ColliderLine::LineIsCollidingWithCircle(dynamic_cast<ColliderLinePtr>(collider1), dynamic_cast<ColliderCirclePtr>(collider2));
 	}
 	else if (collider1->type == ColliderTypeCircle && collider2->type == ColliderTypeLine)
 	{
-		return ColliderLine::LineIsCollidingWithCircle(static_cast<ColliderLinePtr>(collider2), collider1);
+		return ColliderLine::LineIsCollidingWithCircle(dynamic_cast<ColliderLinePtr>(collider2), dynamic_cast<ColliderCirclePtr>(collider1));
 	}
 	return false;
 }
@@ -110,6 +110,10 @@ void Collider::SetCollisionHandler(CollisionEventHandler handler)
 	this->handler = handler;
 }
 
+void Collider::SetParent(GameObjectPtr parent)
+{
+	this->parent = parent;
+}
 //------------------------------------------------------------------------------
 // Private Functions:
 //------------------------------------------------------------------------------

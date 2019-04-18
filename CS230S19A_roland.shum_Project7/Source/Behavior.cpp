@@ -36,37 +36,12 @@
 // Public Functions:
 //------------------------------------------------------------------------------
 //
-//// Dynamically allocate a clone of an existing behavior.
-//// (Hint: Perform a shallow copy of the member variables, then change the 'parent' pointer.)
-//// Params:
-////	 other = Pointer to the component to be cloned.
-//// Returns:
-////	 If 'other' is valid and the memory allocation was successful,
-////	   then return a pointer to the cloned component,
-////	   else return NULL.
-//BehaviorPtr BehaviorClone(BehaviorPtr other, GameObjectPtr parent)
-//{
-//  if (other == NULL)
-//    return NULL;
-//
-//  // Allocate memory for a new behavior
-//  BehaviorPtr clone = malloc(other->memorySize);
-//
-//  // Check if clone was allocated
-//  if (clone == NULL)
-//  {
-//    return NULL;
-//  }
-//
-//  // Shallow copy
-//  memcpy_s(clone, other->memorySize, other, other->memorySize);
-//
-//  // Point the parent
-//  clone->parent = parent;
-//
-//  // Return
-//  return clone;
-//}
+Behavior::Behavior(int curr, int next, GameObjectPtr parent) : stateCurr(curr), stateNext(next),
+	parent(parent), onInit(Init), onUpdate(Update), onExit(Exit)
+{
+
+}
+
 Behavior::Behavior(BehaviorFunctionPtr init, BehaviorFunctionPtrDt update, BehaviorFunctionPtr exit, int curr, int next, GameObjectPtr parent)
 	: onInit(init), onUpdate(update), onExit(exit), stateCurr(curr), stateNext(next), parent(parent)
 {
@@ -90,7 +65,7 @@ Behavior::~Behavior()
 // Params:
 //	 behavior = Pointer to the behavior component.
 //	 dt = Change in time (in seconds) since the last game loop.
-void Behavior::Update(float dt)
+void Behavior::UpdateBehavior(float dt)
 {
   // We are changing states if this is true.
   if (this->stateCurr != this->stateNext)

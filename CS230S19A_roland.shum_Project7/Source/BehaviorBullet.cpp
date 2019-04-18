@@ -18,20 +18,7 @@
 //------------------------------------------------------------------------------
 // Private Consts:
 //------------------------------------------------------------------------------
-// Maximum speed of the bullet.
-static const float bulletSpeedMax = 500.0f;
-// Maximum lifetime of a bullet (in seconds).
-static const float bulletLifeTimeMax = 3.0f;
 
-//------------------------------------------------------------------------------
-// Private Structures:
-//------------------------------------------------------------------------------
-typedef enum BulletEnum
-{
-  cBulletInvalid,
-  cBulletIdle
-
-} BulletState;
 //------------------------------------------------------------------------------
 // Public Variables:
 //------------------------------------------------------------------------------
@@ -43,44 +30,38 @@ typedef enum BulletEnum
 //------------------------------------------------------------------------------
 // Private Function Declarations:
 //------------------------------------------------------------------------------
-static void BehaviorBulletUpdateLifeTimer(BehaviorPtr behavior, float dt);
-static void BehaviorBulletCollisionHandler(GameObjectPtr, GameObjectPtr);
+
 //------------------------------------------------------------------------------
 // Public Functions:
 //------------------------------------------------------------------------------
 
-// Dynamically allocate a new (Bullet) behavior component.
-// (Hint: Use calloc() to ensure that all member variables are initialized to 0.)
-BehaviorPtr BehaviorBulletCreate(void)
+BehaviorBullet::BehaviorBullet(GameObjectPtr parent) : Behavior((int)cBulletInvalid, (int)cBulletIdle,
+	parent)
 {
-  BehaviorPtr newBehavior = calloc(1, sizeof(Behavior));
-  if (newBehavior == NULL)
-    return NULL;
-  newBehavior->stateCurr = cBulletInvalid;
-  newBehavior->stateNext = cBulletIdle;
-  newBehavior->onInit = BehaviorBulletInit;
-  newBehavior->onUpdate = BehaviorBulletUpdate;
-  newBehavior->onExit = BehaviorBulletExit;
-  newBehavior->timer = bulletLifeTimeMax;
-  newBehavior->memorySize = sizeof(Behavior);
-  return newBehavior;
+	this->timer = bulletLifeTimeMax;
+}
+
+BehaviorPtr BehaviorBullet::Clone(GameObjectPtr parent)
+{
+	BehaviorBulletPtr newbullet = new BehaviorBullet(*this);
+	newbullet->parent = parent;
+	return newbullet;
 }
 
 // Initialize the current state of the behavior component.
 // (Hint: Refer to the lecture notes on finite state machines (FSM).)
 // Params:
 //	 behavior = Pointer to the behavior component.
-void BehaviorBulletInit(BehaviorPtr behavior)
+void BehaviorBullet::Init()
 {
-	if (behavior->stateCurr == cBulletIdle)
+	if (this->stateCurr == cBulletIdle)
 	{
-		ColliderPtr parentCollider = GameObjectGetCollider(behavior->parent);
+		ColliderPtr parentCollider = this->parent->getCollider();
 		if (parentCollider != NULL)
 		{
-			ColliderSetCollisionHandler(parentCollider, BehaviorBulletCollisionHandler);
+			parentCollider->SetCollisionHandler(CollisionHandler);
 		}
 	}
-  UNREFERENCED_PARAMETER(behavior);
 }
 
 // Update the current state of the behavior component.
@@ -88,17 +69,17 @@ void BehaviorBulletInit(BehaviorPtr behavior)
 // Params:
 //	 behavior = Pointer to the behavior component.
 //	 dt = Change in time (in seconds) since the last game loop.
-void BehaviorBulletUpdate(BehaviorPtr behavior, float dt)
+void BehaviorBullet::Update(float dt)
 {
-  switch (behavior->stateCurr)
-  {
-  case cBulletIdle:
-    BehaviorBulletUpdateLifeTimer(behavior, dt);
-    break;
-  default:
-    break;
-  }
-  TeleporterUpdateObject(behavior->parent);
+	switch (this->stateCurr)
+	{
+	case cBulletIdle:
+		UpdateLifeTimer(dt);
+		break;
+	default:
+		break;
+	}
+	TeleporterUpdateObject(this->parent);
 }
 
 // Exit the current state of the behavior component.
@@ -106,40 +87,39 @@ void BehaviorBulletUpdate(BehaviorPtr behavior, float dt)
 // Params:
 //	 behavior = Pointer to the behavior component.
 //	 dt = Change in time (in seconds) since the last game loop.
-void BehaviorBulletExit(BehaviorPtr behavior)
+void BehaviorBullet::Exit()
 {
-  UNREFERENCED_PARAMETER(behavior);
 }
 
 //------------------------------------------------------------------------------
 // Private Functions:
 //------------------------------------------------------------------------------
 
-static void BehaviorBulletUpdateLifeTimer(BehaviorPtr behavior, float dt)
+void BehaviorBullet::UpdateLifeTimer(float dt)
 {
-  if (behavior == NULL)
+  if (this == NULL)
     return;
-  if (behavior->timer > 0)
+  if (this->timer > 0)
   {
     // minus time
-    behavior->timer -= dt;
+    this->timer -= dt;
     // If time is up
-    if (behavior->timer <= 0)
+    if (this->timer <= 0)
     {
       //Destroy
-      GameObjectDestroy(behavior->parent);
+		parent->Destroy();
     }
   }
 }
 
-static void BehaviorBulletCollisionHandler(GameObjectPtr objA, GameObjectPtr objB)
+void BehaviorBullet::CollisionHandler(GameObjectPtr objA, GameObjectPtr objB)
 {
 	// If both objects are valid.
 	if (objA != NULL && objB != NULL)
 	{
-		if (strcmp(GameObjectGetName(objB), "Asteroid") == 0)
+		if (strcmp(objB->getName, "Asteroid") == 0)
 		{
-			GameObjectDestroy(objA);
+			objA->Destroy();
 		}
 	}
 }

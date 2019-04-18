@@ -85,12 +85,12 @@ bool ColliderCircle::CircleIsCollidingWithCircle(ColliderCirclePtr collider, Col
 
 	// Get the distance squared between them
 	TransformPtr thisTransform, otherTransform;
-	thisTransform = GameObjectGetTransform(thisCircle->base.parent);
-	otherTransform = GameObjectGetTransform(otherCircle->base.parent);
+	thisTransform = collider->parent->getTransform();
+	otherTransform = other->parent->getTransform();
 	float distanceSquared = Vector2DSquareDistance(thisTransform->getTranslation(), otherTransform->getTranslation());
 
 	// Get the sum of their radius, then sqaure it.
-	float radius = thisCircle->radius + otherCircle->radius;
+	float radius = collider->radius + other->radius;
 	float radiusSquare = radius * radius;
 
 	// Compare the two.

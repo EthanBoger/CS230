@@ -59,7 +59,15 @@ class GameObjectManagers
 private:
 	GameObjectManager gameObjectActiveList;
 	GameObjectManager gameObjectArchetypes;
+
+
 public:
+	static GameObjectManagers& getInstance()
+	{
+		static GameObjectManagers    instance; // Guaranteed to be destroyed.
+							  // Instantiated on first use.
+		return instance;
+	}
 	void Update(float dt);
 	void CheckCollisions();
 	void Draw();
@@ -67,6 +75,14 @@ public:
 	void AddArchetype(GameObjectPtr gameObject);
 	GameObjectPtr GetObjectByName(const char * name);
 	GameObjectPtr GetArchetype(const char * name);
+	void UnloadResource();
+private:
+	GameObjectManagers() = default;
+
+public:
+	GameObjectManagers(GameObjectManagers const&) = delete;
+	~GameObjectManagers();
+	void operator=(GameObjectManagers const&) = delete;
 
 private:
 	void AddGameObject(GameObjectPtr *list, GameObjectPtr obj);

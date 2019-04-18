@@ -52,8 +52,6 @@ void GameStateLevel2Load()
     0.5f, 0.0f, 0xFFFFFF00, 0.0f, 0.0f,
     -0.5f, 0.5f, 0xFFFF0000, 0.0f, 0.0f);
   pMeshSpaceship = AEGfxMeshEnd();
-  AE_ASSERT_MESG(pMeshSpaceship, "Failed to create spaceship mesh!");
-
 }
 
 // Initialize the memory associated with the Level2 game state.
@@ -71,19 +69,19 @@ void GameStateLevel2Update(float dt)
 {
   if (AEInputCheckTriggered('Z'))
   {
-    SpritePtr sprite = GameObjectGetSprite(planetObj);
-    SpriteSetAlpha(sprite, 0.5f);
+	  SpritePtr sprite = planetObj->getSprite();
+	  sprite->setAlpha(0.5f);
   }
   if (AEInputCheckTriggered('X'))
   {
-    SpritePtr sprite = GameObjectGetSprite(planetObj);
-    SpriteSetAlpha(sprite, 1.0f);
+	  SpritePtr sprite = planetObj->getSprite();
+	  sprite->setAlpha(1.0f);
   }
 
   /* Update and display. */
   GameStateLevel2MovementController(planetObj);
-  GameObjectUpdate(planetObj, dt);
-  GameObjectDraw(planetObj);
+  planetObj->Update(dt);
+  planetObj->Draw();
 
   if (AEInputCheckTriggered('1'))
   {
@@ -106,7 +104,8 @@ void GameStateLevel2Update(float dt)
 // Shutdown any memory associated with the Level2 game state.
 void GameStateLevel2Shutdown()
 {
-  GameObjectFree(&planetObj);
+	delete planetObj;
+	planetObj = NULL;
 }
 
 // Unload the resources associated with the Level2 game state.
@@ -123,36 +122,29 @@ void GameStateLevel2Unload()
 //------------------------------------------------------------------------------
 GameObjectPtr GameStateLevel2CreateSpaceship(void)
 {
-  GameObjectPtr newGO = GameObjectCreate("Spaceship");
+  GameObjectPtr newGO = new GameObject("Spaceship");
 
-  TransformPtr transform = TransformCreate(0, 0);
-  if (transform == NULL)
-    return NULL;
+  TransformPtr transform = new Transform(0, 0);
   Vector2D scale = { 100,100 };
-  TransformSetScale(transform, &scale);
-  TransformSetRotation(transform, 0);
+  transform->setScale(&scale);
+  transform->setRotation(0);
 
-  SpritePtr sprite = SpriteCreate("Spaceship Sprite");
-  if (sprite == NULL)
-    return NULL;
-  SpriteSetMesh(sprite, pMeshSpaceship);
+  SpritePtr sprite = new Sprite("Spaceship Sprite");
+  sprite->setMesh(pMeshSpaceship);
 
+  PhysicsPtr physics = new Physics();
 
-  PhysicsPtr physics = PhysicsCreate();
-  if (physics == NULL)
-    return NULL;
-
-  GameObjectAddPhysics(newGO, physics);
-  GameObjectAddSprite(newGO, sprite);
-  GameObjectAddTransform(newGO, transform);
+  newGO->addPhysics(physics);
+  newGO->addSprite(sprite);
+  newGO->addTransform(transform);
 
   return newGO;
 }
 
 void GameStateLevel2MovementController(GameObjectPtr GO)
 {
-  PhysicsPtr physics = GameObjectGetPhysics(GO);
-  TransformPtr transform = GameObjectGetTransform(GO);
+  PhysicsPtr physics = GO->getPhysics();
+  TransformPtr transform = GO->getTransform();
 
   /* Error checking. */
   if (!physics && !transform)
@@ -167,7 +159,7 @@ void GameStateLevel2MovementController(GameObjectPtr GO)
   Vector2D cursor_worldPos;
   AEGfxConvertScreenCoordinatesToWorld((float)mx, (float)my, &cursor_worldPos.x, &cursor_worldPos.y);
 
-  const Vector2D *spaceShip_translation = TransformGetTranslation(transform);
+  const Vector2D *spaceShip_translation = transform->getTranslation();
 
   Vector2D space_to_mouse_vector;
 
@@ -177,9 +169,9 @@ void GameStateLevel2MovementController(GameObjectPtr GO)
 
   /* Set the rotation to that vector we found. */
   float radian = Vector2DToAngleRad(&space_to_mouse_vector);
-  TransformSetRotation(transform, radian);
+  transform->setRotation(radian);
 
   /* Set the velocity by using the direction vector * speed */
   Vector2DScale(&space_to_mouse_vector, &space_to_mouse_vector, spaceshipSpeed);
-  PhysicsSetVelocity(physics, &space_to_mouse_vector);
+  physics->setVelocity(&space_to_mouse_vector);
 }

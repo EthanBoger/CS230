@@ -105,7 +105,8 @@ void GameObjectFactory::UnloadResources(void)
 		}
 		if (spriteSourceList[i] != NULL)
 		{
-			SpriteSourceFree(&spriteSourceList[i]);
+			delete spriteSourceList[i];
+			spriteSourceList[i] = NULL;
 		}
 		if (textureList[i] != NULL)
 		{
@@ -223,10 +224,7 @@ SpriteSourcePtr GameObjectFactory::CreateSpriteSource(GameObjectType objectType)
 		{
 			return NULL;
 		}
-		if ((result = SpriteSourceCreate(16, 6, textureList[objectType])) == NULL)
-		{
-			return NULL;
-		}
+		result = new SpriteSource(16, 6, textureList[objectType]);
 		return result ;
 		break;
 	default:
@@ -256,185 +254,129 @@ bool GameObjectFactory::gameObjectTypeIsValid(GameObjectType objectType)
 
 GameObjectPtr GameObjectFactory::CreateSpaceship(void)
 {
-	GameObjectPtr newObj = GameObjectCreate("Spaceship");
-	TransformPtr trans = TransformCreate(0, 0);
+	GameObjectPtr newObj = new GameObject("Spaceship");
+	TransformPtr trans = new Transform(0, 0);
 
-	/* Error checking. */
-	if (trans == NULL)
-		return NULL;
-
-	TransformSetRotation(trans, 0);
+	trans->setRotation(0);
 	/* Set the scale by making a vector 2d of 100,100 */
 	Vector2D vector_scale = { 50, 40 };
-	TransformSetScale(trans, &vector_scale);
+	trans->setScale(&vector_scale);
 
-	SpritePtr sprite = SpriteCreate("Spaceship Sprite");
+	SpritePtr sprite = new Sprite("Spaceship Sprite");
 
-	/* Error checking */
-	if (sprite == NULL)
-		return NULL;
+	sprite->setMesh(GameObjectFactory::GetMesh(cGameObjectTypeSpaceship));
 
-	SpriteSetMesh(sprite, GameObjectFactoryGetMesh(cGameObjectTypeSpaceship));
-
-	PhysicsPtr physics = PhysicsCreate();
-	BehaviorPtr behavior = BehaviorSpaceshipCreate();
-	ColliderPtr collider = ColliderCircleCreate();
-	ColliderCircleSetRadius(collider, TransformGetScale(trans)->x / 2.0f);
+	PhysicsPtr physics = new Physics();
+	BehaviorPtr behavior = new Spaceship(newObj);
+	ColliderCirclePtr collider = new ColliderCircle();
+	collider->SetRadius(trans->getScale()->x / 2.0f);
 
 	/* Set drag */
-	PhysicsSetDrag(physics, 0.99f);
+	physics->setDrag(0.99f);
 
-	/* Error checking */
-	if (physics == NULL)
-		return NULL;
-
-	GameObjectAddPhysics(newObj, physics);
-	GameObjectAddTransform(newObj, trans);
-	GameObjectAddSprite(newObj, sprite);
-	GameObjectAddBehavior(newObj, behavior);
-	GameObjectAddCollider(newObj, collider);
+	newObj->addPhysics(physics);
+	newObj->addTransform(trans);
+	newObj->addSprite(sprite);
+	newObj->addBehavior(behavior);
+	newObj->addCollider(collider);
 
 	return newObj;
 }
 
 GameObjectPtr GameObjectFactory::CreateAsteroid(void)
 {
-	GameObjectPtr newObj = GameObjectCreate("Asteroid");
-	TransformPtr trans = TransformCreate(0, 0);
+	GameObjectPtr newObj = new GameObject("Asteroid");
+	TransformPtr trans = new Transform(0, 0);
 
-	/* Error checking. */
-	if (trans == NULL)
-		return NULL;
-
-	TransformSetRotation(trans, 0);
+	trans->setRotation(0);
 	/* Set the scale by making a vector 2d of 100,100 */
 	Vector2D vector_scale = { 40, 40 };
-	TransformSetScale(trans, &vector_scale);
+	trans->setScale(&vector_scale);
 
-	SpritePtr sprite = SpriteCreate("Asteroid Sprite");
+	SpritePtr sprite = new Sprite("Asteroid Sprite");
 
-	/* Error checking */
-	if (sprite == NULL)
-		return NULL;
+	sprite->setMesh(GameObjectFactory::GetMesh(cGameObjectTypeAsteroid));
 
-	SpriteSetMesh(sprite, GameObjectFactoryGetMesh(cGameObjectTypeAsteroid));
+	PhysicsPtr physics = new Physics();
+	physics->setRotationalVelocity(PI / 4.0f);
 
-	PhysicsPtr physics = PhysicsCreate();
-	PhysicsSetRotationalVelocity(physics, PI / 4.0f);
+	BehaviorPtr behavior = new BehaviorAsteroid(newObj);
+	ColliderCirclePtr collider = new ColliderCircle();
+	collider->SetRadius(trans->getScale->x / 2.0f);
 
-	BehaviorPtr behavior = BehaviorAsteroidCreate();
-	ColliderPtr collider = ColliderCircleCreate();
-	ColliderCircleSetRadius(collider, TransformGetScale(trans)->x / 2.0f);
-
-	/* Error checking */
-	if (physics == NULL || collider == NULL)
-		return NULL;
-
-	GameObjectAddPhysics(newObj, physics);
-	GameObjectAddTransform(newObj, trans);
-	GameObjectAddSprite(newObj, sprite);
-	GameObjectAddBehavior(newObj, behavior);
-	GameObjectAddCollider(newObj, collider);
+	newObj->addPhysics(physics);
+	newObj->addTransform(trans);
+	newObj->addSprite(sprite);
+	newObj->addBehavior(behavior);
+	newObj->addCollider(collider);
 
 	return newObj;
 }
 
 GameObjectPtr GameObjectFactory::CreateBullet(void)
 {
-	GameObjectPtr newObj = GameObjectCreate("Bullet");
-	TransformPtr trans = TransformCreate(0, 0);
+	GameObjectPtr newObj = new GameObject("Bullet");
+	TransformPtr trans = new Transform(0, 0);
 
-	/* Error checking. */
-	if (trans == NULL)
-		return NULL;
-
-	TransformSetRotation(trans, 0);
+	trans->setRotation(0);
 	/* Set the scale by making a vector 2d of 100,100 */
 	Vector2D vector_scale = { 10,10 };
-	TransformSetScale(trans, &vector_scale);
+	trans->setScale(&vector_scale);
 
-	SpritePtr sprite = SpriteCreate("Bullet Sprite");
+	SpritePtr sprite = new Sprite("Bullet Sprite");
+	sprite->setMesh(GameObjectFactory::GetMesh(cGameObjectTypeBullet));
 
-	/* Error checking */
-	if (sprite == NULL)
-		return NULL;
+	PhysicsPtr physics = new Physics();
+	BehaviorPtr behavior = new BehaviorBullet(newObj);
+	ColliderCirclePtr collider = new ColliderCircle();
+	collider->SetRadius(10.0f);
 
-	SpriteSetMesh(sprite, GameObjectFactoryGetMesh(cGameObjectTypeBullet));
-
-	PhysicsPtr physics = PhysicsCreate();
-	BehaviorPtr behavior = BehaviorBulletCreate();
-	ColliderPtr collider = ColliderCircleCreate();
-	ColliderCircleSetRadius(collider, 10.0f);
-
-	/* Error checking */
-	if (physics == NULL || behavior == NULL || collider == NULL)
-		return NULL;
-
-	GameObjectAddPhysics(newObj, physics);
-	GameObjectAddTransform(newObj, trans);
-	GameObjectAddSprite(newObj, sprite);
-	GameObjectAddBehavior(newObj, behavior);
-	GameObjectAddCollider(newObj, collider);
+	newObj->addPhysics(physics);
+	newObj->addTransform(trans);
+	newObj->addSprite(sprite);
+	newObj->addBehavior(behavior);
+	newObj->addCollider(collider);
 
 	return newObj;
 }
 
 GameObjectPtr GameObjectFactory::CreateHudText(void)
 {
-	GameObjectPtr newObj = GameObjectCreate("HUD Text");
-	TransformPtr trans = TransformCreate(0, 0);
+	GameObjectPtr newObj = new GameObject("HUD Text");
+	TransformPtr trans = new Transform(0, 0);
 
-	/* Error checking. */
-	if (trans == NULL)
-		return NULL;
-
-	TransformSetRotation(trans, 0);
+	trans->setRotation(0);
 	/* Set the scale by making a vector 2d of 100,100 */
 	Vector2D vector_scale = { 20,30 };
-	TransformSetScale(trans, &vector_scale);
+	trans->setScale(&vector_scale);
 
-	SpritePtr sprite = SpriteCreate("HUD Text Sprite");
+	SpritePtr sprite = new Sprite("HUD Text Sprite");
+	sprite->setMesh(GameObjectFactory::GetMesh(cGameObjectTypeHudText));
+	sprite->setSpriteSource(GameObjectFactory::GetSpriteSource(cGameObjectTypeHudText));
 
-	/* Error checking */
-	if (sprite == NULL)
-		return NULL;
+	BehaviorPtr behavior = new BehaviorAsteroid(newObj);
 
-	SpriteSetMesh(sprite, GameObjectFactoryGetMesh(cGameObjectTypeHudText));
-	SpriteSetSpriteSource(sprite, GameObjectFactoryGetSpriteSource(cGameObjectTypeHudText));
-
-	BehaviorPtr behavior = BehaviorHudTextCreate();
-
-
-	GameObjectAddTransform(newObj, trans);
-	GameObjectAddSprite(newObj, sprite);
-	GameObjectAddBehavior(newObj, behavior);
+	newObj->addTransform(trans);
+	newObj->addSprite(sprite);
+	newObj->addBehavior(behavior);
 
 	return newObj;
 }
 
 GameObjectPtr GameObjectFactory::CreateArena(void)
 {
-	GameObjectPtr newObj = GameObjectCreate("Arena");
-	TransformPtr trans = TransformCreate(0, 0);
+	GameObjectPtr newObj = new GameObject("Arena");
+	TransformPtr trans = new Transform(0, 0);
 
-	/* Error checking. */
-	if (trans == NULL)
-		return NULL;
-
-	TransformSetRotation(trans, 0);
+	trans->setRotation(0);
 	/* Set the scale by making a vector 2d of 100,100 */
 	Vector2D vector_scale = { 400, 200 };
-	TransformSetScale(trans, &vector_scale);
+	trans->setScale(&vector_scale);
 
-	SpritePtr sprite = SpriteCreate("Arena Sprite");
+	SpritePtr sprite = new Sprite("Arena Sprite");
+	sprite->setMesh(GameObjectFactory::GetMesh(cGameObjectTypeArena));
 
-	/* Error checking */
-	if (sprite == NULL)
-		return NULL;
-
-	SpriteSetMesh(sprite, GameObjectFactoryGetMesh(cGameObjectTypeArena));
-
-	ColliderPtr collider = ColliderLineCreate();
+	ColliderLinePtr collider = new ColliderLine();
 
 	Vector2D points[4]; // TL, TR, BL, BR
 	Vector2DSet(&points[0], AEGfxGetWinMinX(), AEGfxGetWinMaxY());
@@ -442,10 +384,10 @@ GameObjectPtr GameObjectFactory::CreateArena(void)
 	Vector2DSet(&points[2], AEGfxGetWinMinX(), AEGfxGetWinMinY());
 	Vector2DSet(&points[3], AEGfxGetWinMaxX(), AEGfxGetWinMinY());
 
-	ColliderLineAddLineSegment(collider, &points[0], &points[1]); // TL TR
-	ColliderLineAddLineSegment(collider, &points[0], &points[2]); // TL BL
-	ColliderLineAddLineSegment(collider, &points[2], &points[3]); // BL BR
-	ColliderLineAddLineSegment(collider, &points[3], &points[1]); // BR TR
+	collider->AddLineSegment(&points[0], &points[1]);
+	collider->AddLineSegment(&points[0], &points[2]);
+	collider->AddLineSegment(&points[2], &points[3]);
+	collider->AddLineSegment(&points[3], &points[1]);
 
 	// Reuse the four points, this time around the obj : TL, TR, BL, BR
 	Vector2DSet(&points[0], -200, 100);
@@ -453,13 +395,20 @@ GameObjectPtr GameObjectFactory::CreateArena(void)
 	Vector2DSet(&points[2], -200, -100);
 	Vector2DSet(&points[3], 200, -100);
 
-	ColliderLineAddLineSegment(collider, &points[0], &points[1]); // TL TR
-	ColliderLineAddLineSegment(collider, &points[0], &points[2]); // TL BL
-	ColliderLineAddLineSegment(collider, &points[2], &points[3]); // BL BR
-	ColliderLineAddLineSegment(collider, &points[3], &points[1]); // BR TR
 
-	GameObjectAddTransform(newObj, trans);
-	GameObjectAddSprite(newObj, sprite);
-	GameObjectAddCollider(newObj, collider);
+	collider->AddLineSegment(&points[0], &points[1]);
+	collider->AddLineSegment(&points[0], &points[2]);
+	collider->AddLineSegment(&points[2], &points[3]);
+	collider->AddLineSegment(&points[3], &points[1]);
+
+	//ColliderLineAddLineSegment(collider, &points[0], &points[1]); // TL TR
+	//ColliderLineAddLineSegment(collider, &points[0], &points[2]); // TL BL
+	//ColliderLineAddLineSegment(collider, &points[2], &points[3]); // BL BR
+	//ColliderLineAddLineSegment(collider, &points[3], &points[1]); // BR TR
+
+	newObj->addTransform(trans);
+	newObj->addSprite(sprite);
+	newObj->addCollider(collider);
+
 	return newObj;
 }

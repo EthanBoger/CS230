@@ -25,20 +25,20 @@
 //------------------------------------------------------------------------------
 // Public Consts:
 //------------------------------------------------------------------------------
-
+typedef class Spaceship* SpaceshipPtr;
 //------------------------------------------------------------------------------
 // Public Structures:
 //------------------------------------------------------------------------------
 class Spaceship : public Behavior
 {
 public:
-	Spaceship();
+	Spaceship(GameObjectPtr parent);
 	virtual BehaviorPtr Clone(GameObjectPtr parent);
 private:
 	// Main interface with base class.
-	void Init();
-	void Update(float dt);
-	void Exit();
+	virtual void Init();
+	virtual void Update(float dt);
+	virtual void Exit();
 	
 	// Private const
 private:
@@ -61,12 +61,12 @@ private:
 
 	// Private functions
 private:
-	void BehaviorSpaceshipUpdateRotation(float dt);
-	void BehaviorSpaceshipUpdateVelocity(float dt);
-	void BehaviorSpaceshipUpdateWeapon(float dt);
-	void BehaviorSpaceshipSpawnBullet();
-	void BehaviorSpaceshipCollisionHandler(GameObjectPtr, GameObjectPtr);
-	void BehaviorSpaceshipDeadAnim(float dt);
+	void UpdateRotation(float dt);
+	void UpdateVelocity(float dt);
+	void UpdateWeapon(float dt);
+	void SpawnBullet();
+	static void CollisionHandler(GameObjectPtr, GameObjectPtr);
+	void DeadAnim(float dt);
 };
 const float Spaceship::spaceshipAcceleration = 150.0f;
 const float Spaceship::spaceshipSpeedMax = 500.0f;

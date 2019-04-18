@@ -54,10 +54,16 @@ protected:
 	int stateCurr;
 	int stateNext;
 
+	friend class Spaceship;
+
 		// Behavior Finite-State Machine (FSM) function pointers.
 	BehaviorFunctionPtr		onInit;
 	BehaviorFunctionPtrDt	onUpdate;
 	BehaviorFunctionPtr		onExit;
+
+	virtual void Init() = 0;
+	virtual void Update(float dt) = 0;
+	virtual void Exit() = 0;
 
 	// Additional variables shared by all behaviors.
 	// NOTE: Variables that are unique to a specific behavior should not be placed here.
@@ -78,7 +84,8 @@ public:
 	//	   else return NULL.
 	virtual BehaviorPtr Clone(GameObjectPtr parent) = 0;
 	Behavior(const Behavior& other) = default;
-	Behavior(BehaviorFunctionPtr, BehaviorFunctionPtrDt, BehaviorFunctionPtr, int curr, int next, GameObjectPtr parent);
+	Behavior(BehaviorFunctionPtr init, BehaviorFunctionPtrDt update, BehaviorFunctionPtr exit, int curr, int next, GameObjectPtr parent);
+	Behavior(int curr, int next, GameObjectPtr parent);
 	~Behavior();
 
 	// Update the behavior component.
@@ -86,7 +93,7 @@ public:
 	// Params:
 	//	 behavior = Pointer to the behavior component.
 	//	 dt = Change in time (in seconds) since the last game loop.
-	void Update(float dt);
+	void UpdateBehavior(float dt);
 
 } Behavior;
 

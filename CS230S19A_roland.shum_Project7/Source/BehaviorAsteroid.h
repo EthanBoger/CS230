@@ -14,13 +14,8 @@
 //------------------------------------------------------------------------------
 // Include Files:
 //------------------------------------------------------------------------------
-
+#include "Behavior.h"
 //------------------------------------------------------------------------------
-
-#ifdef __cplusplus
-extern "C" {
-	/* Assume C declarations for C++ */
-#endif
 
 //------------------------------------------------------------------------------
 // Forward References:
@@ -33,44 +28,66 @@ typedef struct Behavior * BehaviorPtr;
 //------------------------------------------------------------------------------
 
 // An example of the enums to be defined in BehaviorAsteroid.c.
-#if 0
-typedef enum
-{
-	cAsteroidLarge,
-	cAsteroidMedium,
-	cAsteroidSmall,
 
-} AsteroidSize;
-
-typedef enum
-{
-	cAsteroidOriginTlc,
-	cAsteroidOriginTrc,
-	cAsteroidOriginBlc,
-	cAsteroidOriginBrc,
-	cAsteroidOriginCount,
-
-} AsteroidOrigin;
-#endif
 
 //------------------------------------------------------------------------------
 // Public Structures:
 //------------------------------------------------------------------------------
 
-// An example of the structure to be defined in BehaviorAsteroid.c.
-#if 0
-typedef struct BehaviorAsteroid
+typedef class BehaviorAsteroid* BehaviorAsteroidPtr;
+class BehaviorAsteroid : public Behavior
 {
-	// Inherit the base behavior structure.
-	Behavior	base;
+private:
+	typedef enum
+	{
+		cAsteroidLarge,
+		cAsteroidMedium,
+		cAsteroidSmall,
+
+	} AsteroidSize;
+
+	typedef enum
+	{
+		cAsteroidOriginTlc,
+		cAsteroidOriginTrc,
+		cAsteroidOriginBlc,
+		cAsteroidOriginBrc,
+		cAsteroidOriginCount,
+
+	} AsteroidOrigin;
+
+	typedef enum
+	{
+		cAsteroidInvalid,
+		cAsteroidIdle
+	} AsteroidStates;
+
+private:
+	static const float asteroidSpeedMin;
+	static const float asteroidSpeedMax;
+	static const float asteroidSpawnOffset;
 
 	// Add asteroid-specific behavior variables.
 	AsteroidSize	size;
 	AsteroidOrigin	origin;
 
-} BehaviorAsteroid, *BehaviorAsteroidPtr;
-#endif
 
+public:
+	BehaviorAsteroid(GameObjectPtr parent);
+	virtual BehaviorPtr Clone(GameObjectPtr parent);
+
+private:
+	void Init();
+	void Update(float dt);
+	void Exit();
+
+	void SetPosition(BehaviorAsteroidPtr);
+	void SetVelocity(BehaviorAsteroidPtr);
+	static void CollisionHandler(GameObjectPtr, GameObjectPtr);
+};
+const float BehaviorAsteroid::asteroidSpeedMin = 50.0f;
+const float BehaviorAsteroid::asteroidSpeedMax = 100.0f;
+const float BehaviorAsteroid::asteroidSpawnOffset = 10.0f;
 //------------------------------------------------------------------------------
 // Public Variables:
 //------------------------------------------------------------------------------
@@ -79,33 +96,4 @@ typedef struct BehaviorAsteroid
 // Public Functions:
 //------------------------------------------------------------------------------
 
-// Dynamically allocate a new (Asteroid) behavior component.
-// (Hint: Use calloc() to ensure that all member variables are initialized to 0.)
-BehaviorPtr BehaviorAsteroidCreate(void);
-
-// Initialize the current state of the behavior component.
-// (Hint: Refer to the lecture notes on finite state machines (FSM).)
-// Params:
-//	 behavior = Pointer to the behavior component.
-void BehaviorAsteroidInit(BehaviorPtr behavior);
-
-// Update the current state of the behavior component.
-// (Hint: Refer to the lecture notes on finite state machines (FSM).)
-// Params:
-//	 behavior = Pointer to the behavior component.
-//	 dt = Change in time (in seconds) since the last game loop.
-void BehaviorAsteroidUpdate(BehaviorPtr behavior, float dt);
-
-// Exit the current state of the behavior component.
-// (Hint: Refer to the lecture notes on finite state machines (FSM).)
-// Params:
-//	 behavior = Pointer to the behavior component.
-//	 dt = Change in time (in seconds) since the last game loop.
-void BehaviorAsteroidExit(BehaviorPtr behavior);
-
 //------------------------------------------------------------------------------
-
-#ifdef __cplusplus
-}                       /* End of extern "C" { */
-#endif
-

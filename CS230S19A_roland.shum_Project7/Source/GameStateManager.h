@@ -19,10 +19,6 @@
 
 //------------------------------------------------------------------------------
 
-#ifdef __cplusplus
-extern "C" {
-	/* Assume C declarations for C++ */
-#endif
 
 //------------------------------------------------------------------------------
 // Public Constants:
@@ -59,8 +55,3 @@ bool GameStateManagerIsRunning();
 void GameStateManagerSetNextState(GameStates nextState);
 
 //------------------------------------------------------------------------------
-
-#ifdef __cplusplus
-}                       /* End of extern "C" { */
-#endif
-

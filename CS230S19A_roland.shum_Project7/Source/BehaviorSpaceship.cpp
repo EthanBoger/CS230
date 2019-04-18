@@ -47,37 +47,35 @@
 
 // Dynamically allocate a new (Spaceship) behavior component.
 // (Hint: Use calloc() to ensure that all member variables are initialized to 0.)
-BehaviorPtr BehaviorSpaceshipCreate(void)
-{
-	BehaviorPtr newBehavior = calloc(1, sizeof(Behavior));
-	if (newBehavior == NULL)
-		return NULL;
 
-	newBehavior->stateCurr = cSpaceshipInvalid;
-	newBehavior->stateNext = cSpaceshipIdle;
-	newBehavior->onInit = BehaviorSpaceshipInit;
-	newBehavior->onUpdate = BehaviorSpaceshipUpdate;
-	newBehavior->onExit = BehaviorSpaceshipExit;
-	newBehavior->memorySize = sizeof(Behavior);
-	return newBehavior;
+Spaceship::Spaceship(GameObjectPtr parent) : Behavior((int)cSpaceshipInvalid, (int)cSpaceshipIdle, parent)
+{
+	
 }
+
+BehaviorPtr Spaceship::Clone(GameObjectPtr parent)
+{
+	SpaceshipPtr newAsteroird = new Spaceship(*this);
+	newAsteroird->parent = parent;
+	return newAsteroird;
+}
+
 
 // Initialize the current state of the behavior component.
 // (Hint: Refer to the lecture notes on finite state machines (FSM).)
 // Params:
 //	 behavior = Pointer to the behavior component.
-void BehaviorSpaceshipInit(BehaviorPtr behavior)
+void Spaceship::Init()
 {
-	if (behavior->stateCurr == cSpaceshipIdle)
+	if (this->stateCurr == cSpaceshipIdle)
 	{
-		ColliderPtr collider = GameObjectGetCollider(behavior->parent);
-		ColliderSetCollisionHandler(collider, BehaviorSpaceshipCollisionHandler);
+		ColliderPtr collider = this->parent->getCollider();
+		collider->SetCollisionHandler(CollisionHandler);
 	}
-	else if (behavior->stateCurr == cSpaceshipDead)
+	else if (this->stateCurr == cSpaceshipDead)
 	{
-		behavior->timer = spaceshipDeathDuration;
+		this->timer = spaceshipDeathDuration;
 	}
-	UNREFERENCED_PARAMETER(behavior);
 }
 
 // Update the current state of the behavior component.
@@ -85,37 +83,37 @@ void BehaviorSpaceshipInit(BehaviorPtr behavior)
 // Params:
 //	 behavior = Pointer to the behavior component.
 //	 dt = Change in time (in seconds) since the last game loop.
-void BehaviorSpaceshipUpdate(BehaviorPtr behavior, float dt)
+void Spaceship::Update(float dt)
 {
-	switch (behavior->stateCurr)
+	switch (this->stateCurr)
 	{
 	case cSpaceshipIdle:
-		BehaviorSpaceshipUpdateRotation(behavior, dt);
-		BehaviorSpaceshipUpdateWeapon(behavior, dt);
+		UpdateRotation(dt);
+		UpdateWeapon(dt);
 		if (AEInputCheckCurr(VK_UP))
 		{
-			behavior->stateNext = cSpaceshipThrust;
+			this->stateNext = cSpaceshipThrust;
 		}
 		break;
 	case cSpaceshipThrust:
-		BehaviorSpaceshipUpdateRotation(behavior, dt);
-		BehaviorSpaceshipUpdateVelocity(behavior, dt);
-		BehaviorSpaceshipUpdateWeapon(behavior, dt);
+		UpdateRotation(dt);
+		UpdateVelocity(dt);
+		UpdateWeapon(dt);
 		if (!AEInputCheckCurr(VK_UP))
 		{
-			behavior->stateNext = cSpaceshipIdle;
+			this->stateNext = cSpaceshipIdle;
 		}
 		break;
 	case cSpaceshipDead:
-		behavior->timer -= dt;
-		if (behavior->timer < 0)
+		this->timer -= dt;
+		if (this->timer < 0)
 			GameStateManagerSetNextState(GsRestart);
-		BehaviorSpaceshipDeadAnim(behavior, dt);
+		DeadAnim(dt);
 		break;
 	default:
 		break;
 	}
-	TeleporterUpdateObject(behavior->parent);
+	TeleporterUpdateObject(this->parent);
 }
 
 // Exit the current state of the behavior component.
@@ -123,9 +121,8 @@ void BehaviorSpaceshipUpdate(BehaviorPtr behavior, float dt)
 // Params:
 //	 behavior = Pointer to the behavior component.
 //	 dt = Change in time (in seconds) since the last game loop.
-void BehaviorSpaceshipExit(BehaviorPtr behavior)
+void Spaceship::Exit()
 {
-	UNREFERENCED_PARAMETER(behavior);
 }
 
 
@@ -133,47 +130,46 @@ void BehaviorSpaceshipExit(BehaviorPtr behavior)
 // Private Functions:
 //------------------------------------------------------------------------------
 
-static void BehaviorSpaceshipUpdateRotation(BehaviorPtr behavior, float dt)
+void Spaceship::UpdateRotation(float dt)
 {
 	UNREFERENCED_PARAMETER(dt);
 
 	// Get physics component.
-	PhysicsPtr physics = GameObjectGetPhysics(behavior->parent);
+	PhysicsPtr physics = this->parent->getPhysics();
 
 	if (AEInputCheckCurr(VK_LEFT))
 	{
-		PhysicsSetRotationalVelocity(physics, spaceshipTurnRateMax);
+		physics->setRotationalVelocity(spaceshipTurnRateMax);
 	}
 	else if (AEInputCheckCurr(VK_RIGHT))
 	{
-		PhysicsSetRotationalVelocity(physics, -spaceshipTurnRateMax);
+		physics->setRotationalVelocity(-spaceshipTurnRateMax);
 	}
 	else
 	{
-		PhysicsSetRotationalVelocity(physics, 0);
+		physics->setRotationalVelocity(0);
 	}
 }
 
-static void BehaviorSpaceshipUpdateVelocity(BehaviorPtr behavior, float dt)
+void Spaceship::UpdateVelocity(float dt)
 {
 	UNREFERENCED_PARAMETER(dt);
 
-	PhysicsPtr physics = GameObjectGetPhysics(behavior->parent);
-	TransformPtr transform = GameObjectGetTransform(behavior->parent);
+	PhysicsPtr physics = this->parent->getPhysics();
+	TransformPtr transform = this->parent->getTransform();
 
 	if (physics == NULL || transform == NULL)
 		return;
 
 	// Get the unit vector rotation in Vector form.
-	float rotation = TransformGetRotation(transform);
+	float rotation = transform->getRotation();
 
 	Vector2D rotation2D;
 	Vector2DFromAngleRad(&rotation2D, rotation);
 	Vector2DNormalize(&rotation2D, &rotation2D);
 
 	// Get a copy of the current velocity
-	Vector2D velocity;
-	velocity = *PhysicsGetVelocity(physics);
+	Vector2D velocity = *physics->getVelocity();
 
 	// velocity += direction of rotation * spaceshipAcceleration * dt
 	float accel = spaceshipAcceleration * dt;
@@ -187,83 +183,79 @@ static void BehaviorSpaceshipUpdateVelocity(BehaviorPtr behavior, float dt)
 	{
 		Vector2DScale(&velocity, &velocity, spaceshipSpeedMax / speed);
 	}
-
-	PhysicsSetVelocity(physics, &velocity);
+	physics->setVelocity(&velocity);
 }
 
-static void BehaviorSpaceshipUpdateWeapon(BehaviorPtr behavior, float dt)
+void Spaceship::UpdateWeapon(float dt)
 {
-	if (behavior == NULL)
+	if (this == NULL)
 		return;
-	if (behavior->timer > 0)
+	if (this->timer > 0)
 	{
-		behavior->timer -= dt;
-		if (behavior->timer < 0)
+		this->timer -= dt;
+		if (this->timer < 0)
 		{
-			behavior->timer = 0;
+			this->timer = 0;
 		}
 	}
 	if (AEInputCheckCurr(' '))
 	{
-		if (behavior->timer <= 0)
+		if (this->timer <= 0)
 		{
-			BehaviorSpaceshipSpawnBullet(behavior);
-			behavior->timer = spaceshipWeaponCooldownTime;
+			SpawnBullet();
+			this->timer = spaceshipWeaponCooldownTime;
 		}
 	}
 }
 
-static void BehaviorSpaceshipSpawnBullet(BehaviorPtr behavior)
+void Spaceship::SpawnBullet()
 {
-	GameObjectPtr bullet = GameObjectManagerGetArchetype("Bullet");
+	GameObjectPtr bullet = GameObjectManagers::getInstance().GetArchetype("Bullet");
 
-	if (bullet == NULL)
-		return;
-
-	GameObjectPtr clone = GameObjectClone(bullet);
+	GameObjectPtr clone = new GameObject(*bullet);
 
 	// Get the spaceship rotation and position
-	TransformPtr transform = GameObjectGetTransform(behavior->parent);
-	float rotation = TransformGetRotation(transform);
-	Vector2D position = *TransformGetTranslation(transform);
+	TransformPtr transform = this->parent->getTransform();
+	float rotation = transform->getRotation();
+	Vector2D position = *transform->getTranslation();
 
 	// Set the bullet transform
-	TransformPtr bulletTransform = GameObjectGetTransform(clone);
-	TransformSetRotation(bulletTransform, rotation);
-	TransformSetTranslation(bulletTransform, &position);
+	TransformPtr bulletTransform = clone->getTransform();
+	bulletTransform->setRotation(rotation);
+	bulletTransform->setTranslation(&position);
 
 	// Set the bullet physics stuff
 	Vector2D rotationVector;
 	Vector2DFromAngleRad(&rotationVector, rotation);
-	PhysicsPtr bulletPhy = GameObjectGetPhysics(clone);
-	Vector2DScale(&rotationVector, &rotationVector, spaceshipWeaponBulletSpeed);
-	PhysicsSetVelocity(bulletPhy, &rotationVector);
 
-	GameObjectManagerAdd(clone);
+	PhysicsPtr bulletPhy = clone->getPhysics();
+	Vector2DScale(&rotationVector, &rotationVector, spaceshipWeaponBulletSpeed);
+	bulletPhy->setVelocity(&rotationVector);
+	GameObjectManagers::getInstance().Add(clone);
 }
 
-static void BehaviorSpaceshipCollisionHandler(GameObjectPtr objA, GameObjectPtr objB)
+void Spaceship::CollisionHandler(GameObjectPtr objA, GameObjectPtr objB)
 {
 	if (objA != NULL && objB != NULL)
 	{
-		if (GameObjectIsNamed(objB, "Asteroid"))
+		if (objB->isNamed("Asteroid"))
 		{
-			GameObjectGetBehavior(objA)->stateNext = cSpaceshipDead;
+			objA->getBehavior()->stateNext = cSpaceshipDead;
 		}
 	}
 }
 
-static void BehaviorSpaceshipDeadAnim(BehaviorPtr behavior, float dt)
+void Spaceship::DeadAnim(float dt)
 {
 	UNREFERENCED_PARAMETER(dt);
 
 	// Set the spaceship to spin increasingly
-	PhysicsPtr physics = GameObjectGetPhysics(behavior->parent);
-	PhysicsSetRotationalVelocity(physics, PhysicsGetRotationalVelocity(physics) + 10);
+	PhysicsPtr physics = this->parent->getPhysics();
+	physics->setRotationalVelocity(physics->getRotationalVelocity() + 10);
 
 	// Make the spaceship smaller and smaller.
-	TransformPtr transform = GameObjectGetTransform(behavior->parent);
-	Vector2D newScale = *TransformGetScale(transform);
+	TransformPtr transform = this->parent->getTransform();
+	Vector2D newScale = *transform->getScale();
 	Vector2DScale(&newScale, &newScale, 0.9f);
-	TransformSetScale(transform, &newScale);
+	transform->setScale(&newScale);
 }

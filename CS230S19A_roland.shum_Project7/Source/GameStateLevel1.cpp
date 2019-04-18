@@ -35,7 +35,7 @@ static const float CheckSquareDistance = (75.0f * 75.0f);
 //------------------------------------------------------------------------------
 // Private Structures:
 //------------------------------------------------------------------------------
-typedef enum
+enum MonkeyStates
 {
   MonkeyInvalid = -1,
   MonkeyIdle,
@@ -44,7 +44,7 @@ typedef enum
 
   MonkeyMax
 
-} MonkeyStates;
+};
 
 //------------------------------------------------------------------------------
 // Public Variables:
@@ -118,7 +118,7 @@ void GameStateLevel1Load()
     return;
   }
 
-  planetSpriteSource = SpriteSourceCreate(1, 1, planetTexture);
+  planetSpriteSource = new SpriteSource(1, 1, planetTexture);
   if (planetSpriteSource == NULL)
   {
     return;
@@ -146,19 +146,19 @@ void GameStateLevel1Load()
     return;
   }
 
-  monkeySpriteSource[MonkeyIdle] = SpriteSourceCreate(1, 1, monkeyTexture[MonkeyIdle]);
+  monkeySpriteSource[MonkeyIdle] = new SpriteSource(1, 1, monkeyTexture[MonkeyIdle]);
   if (monkeySpriteSource[MonkeyIdle] == NULL)
   {
     return;
   }
 
-  monkeySpriteSource[MonkeyWalk] = SpriteSourceCreate(3, 3, monkeyTexture[MonkeyWalk]);
+  monkeySpriteSource[MonkeyWalk] = new SpriteSource(3, 3, monkeyTexture[MonkeyWalk]);
   if (monkeySpriteSource[MonkeyWalk] == NULL)
   {
     return;
   }
 
-  monkeySpriteSource[MonkeyJump] = SpriteSourceCreate(1, 1, monkeyTexture[MonkeyJump]);
+  monkeySpriteSource[MonkeyJump] = new SpriteSource(1, 1, monkeyTexture[MonkeyJump]);
   if (monkeySpriteSource[MonkeyJump] == NULL)
   {
     return;
@@ -176,7 +176,7 @@ void GameStateLevel1Load()
     return;
   }
 
-  if ((LivesTextSpriteSource = SpriteSourceCreate(16, 6, LivesTextTexture)) == NULL)
+  if ((LivesTextSpriteSource = new SpriteSource(16, 6, LivesTextTexture)) == NULL)
   {
     return;
   }
@@ -209,13 +209,14 @@ void GameStateLevel1Update(float dt)
   GameStateLevel1MovementController(Monkey);
   GameStateLevel1BounceController(planetObj);
 
-  GameObjectUpdate(planetObj, dt);
-  GameObjectUpdate(LivesText, dt);
-  GameObjectUpdate(Monkey, dt);
+  planetObj->Update(dt);
+  LivesText->Update(dt);
+  Monkey->Update(dt);
 
-  GameObjectDraw(planetObj);
-  GameObjectDraw(LivesText);
-  GameObjectDraw(Monkey);
+  planetObj->Draw();
+  LivesText->Draw();
+  Monkey->Draw();
+
 
   // Check if colliding
   if (GameStateLevel1IsColliding(planetObj, Monkey))
@@ -253,9 +254,12 @@ void GameStateLevel1Update(float dt)
 // Shutdown any memory associated with the Level1 game state.
 void GameStateLevel1Shutdown()
 {
-  GameObjectFree(&planetObj);
-  GameObjectFree(&Monkey);
-  GameObjectFree(&LivesText);
+	delete planetObj;
+	planetObj = NULL;
+	delete Monkey;
+	Monkey = NULL;
+	delete LivesText;
+	LivesText = NULL;
 }
 
 // Unload the resources associated with the Level1 game state.
@@ -264,7 +268,8 @@ void GameStateLevel1Unload()
   /* Free sprite source, texture, and texture list. */
   if (planetSpriteSource != NULL)
   {
-    SpriteSourceFree(&planetSpriteSource);
+    delete (planetSpriteSource);
+	planetSpriteSource = NULL;
   }
   if (planetTexture != NULL)
   {
@@ -289,7 +294,8 @@ void GameStateLevel1Unload()
     }
     if (monkeySpriteSource[i] != NULL)
     {
-      SpriteSourceFree(&monkeySpriteSource[i]);
+      delete (monkeySpriteSource[i]);
+	  monkeySpriteSource[i] = NULL;
     }
   }
 
@@ -304,7 +310,7 @@ void GameStateLevel1Unload()
   }
   if (LivesTextSpriteSource != NULL)
   {
-    SpriteSourceFree(&LivesTextSpriteSource);
+    delete (LivesTextSpriteSource);
   }
 }
 
@@ -314,111 +320,74 @@ void GameStateLevel1Unload()
 
 static GameObjectPtr GameStateLevel1CreatePlanet(void)
 {
-  GameObjectPtr newObj = GameObjectCreate("Planet");
-  TransformPtr trans = TransformCreate(0, 300);
+  GameObjectPtr newObj = new GameObject("Planet");
+  TransformPtr trans = new Transform(0, 300);
 
-  /* Error checking. */
-  if (trans == NULL)
-    return NULL;
-
-  TransformSetRotation(trans, 0);
+  trans->setRotation(0);
   /* Set the scale by making a vector 2d of 100,100 */
   Vector2D vector_scale = { 100,100 };
-  TransformSetScale(trans, &vector_scale);
+  trans->setScale(&vector_scale);
 
-  SpritePtr sprite = SpriteCreate("Planet Sprite");
+  SpritePtr sprite = new Sprite("Planet Sprite");
+  sprite->setMesh(Mesh1x1);
+  sprite->setSpriteSource(planetSpriteSource);
 
-  /* Error checking */
-  if (sprite == NULL)
-    return NULL;
-
-  SpriteSetMesh(sprite, Mesh1x1);
-  SpriteSetSpriteSource(sprite, planetSpriteSource);
-
-
-  PhysicsPtr physics = PhysicsCreate();
+  PhysicsPtr physics = new Physics();
   Vector2D vector_velo = { 150, 0 };
+  physics->setVelocity(&vector_velo);
+  physics->setAcceleration(&gravityNormal);
 
-  PhysicsSetVelocity(physics, &vector_velo);
-  PhysicsSetAcceleration(physics, &gravityNormal);
-
-  /* Error checking */
-  if (physics == NULL)
-    return NULL;
-
-  GameObjectAddPhysics(newObj, physics);
-  GameObjectAddTransform(newObj, trans);
-  GameObjectAddSprite(newObj, sprite);
+  newObj->addPhysics(physics);
+  newObj->addTransform(trans);
+  newObj->addSprite(sprite);
 
   return newObj;
 }
 
 static GameObjectPtr GameStateLevel1CreateMonkey(void)
 {
-  GameObjectPtr newObj = GameObjectCreate("Monkey");
-  TransformPtr trans = TransformCreate(0, groundHeight);
+  GameObjectPtr newObj = new GameObject("Monkey");
+  TransformPtr trans = new Transform(0, groundHeight);
 
-  /* Error checking. */
-  if (trans == NULL)
-    return NULL;
-
-  TransformSetRotation(trans, 0);
+  trans->setRotation(0);
   /* Set the scale by making a vector 2d of 100,100 */
   Vector2D vector_scale = { 150,150 };
-  TransformSetScale(trans, &vector_scale);
+  trans->setScale(&vector_scale);
 
-  SpritePtr sprite = SpriteCreate("Monkey Sprite");
+  SpritePtr sprite = new Sprite("Monkey Sprite");
+  sprite->setMesh(mesh3x3);
+  sprite->setSpriteSource(monkeySpriteSource[MonkeyIdle]);
 
-  /* Error checking */
-  if (sprite == NULL)
-    return NULL;
+  AnimationPtr anim = new Animation(sprite);
+  PhysicsPtr physics = new Physics();
 
-  SpriteSetMesh(sprite, mesh3x3);
-  SpriteSetSpriteSource(sprite, monkeySpriteSource[MonkeyIdle]);
-
-  AnimationPtr anim = AnimationCreate(sprite);
-  PhysicsPtr physics = PhysicsCreate();
-
-  /* Error checking */
-  if (physics == NULL)
-    return NULL;
-
-  GameObjectAddAnimation(newObj, anim);
-  GameObjectAddPhysics(newObj, physics);
-  GameObjectAddTransform(newObj, trans);
-  GameObjectAddSprite(newObj, sprite);
+  newObj->addAnimation(anim);
+  newObj->addPhysics(physics);
+  newObj->addTransform(trans);
+  newObj->addSprite(sprite);
 
   return newObj;
 }
 
 static GameObjectPtr GameStateLevel1CreateLivesText(void)
 {
-  GameObjectPtr newObj = GameObjectCreate("LivesText");
-  TransformPtr trans = TransformCreate(-350, 250);
+  GameObjectPtr newObj = new GameObject("LivesText");
+  TransformPtr trans = new Transform(-350, 250);
 
-  /* Error checking. */
-  if (trans == NULL)
-    return NULL;
-
-  TransformSetRotation(trans, 0);
+  trans->setRotation(0);
   /* Set the scale by making a vector 2d of 100,100 */
-  Vector2D vector_scale = { 50,50 };
-  TransformSetScale(trans, &vector_scale);
+  Vector2D vector_scale = { 50,50 }; 
+  trans->setScale(&vector_scale);
 
-  SpritePtr sprite = SpriteCreate("LivesText Sprite");
-
-  /* Error checking */
-  if (sprite == NULL)
-    return NULL;
-
-  SpriteSetMesh(sprite, LivesTextVertexList);
-  SpriteSetSpriteSource(sprite, LivesTextSpriteSource);
+  SpritePtr sprite = new Sprite("LivesText Sprite");
+  sprite->setMesh(LivesTextVertexList);
+  sprite->setSpriteSource(LivesTextSpriteSource);
 
   sprintf_s(livesBuffer, 16, "Lives: %d", numLives);
-  SpriteSetText(sprite, livesBuffer);
+  sprite->setText(livesBuffer);
 
-  GameObjectAddTransform(newObj, trans);
-  GameObjectAddSprite(newObj, sprite);
+  newObj->addTransform(trans);
+  newObj->addSprite(sprite);
 
   return newObj;
 }
@@ -429,27 +398,27 @@ static void GameStateLevel1SetMonkeyState(GameObjectPtr gameObject, MonkeyStates
   {
     monkeyState = newState;
 
-    SpritePtr sprite = GameObjectGetSprite(gameObject);
-    AnimationPtr anim = GameObjectGetAnimation(gameObject);
+	SpritePtr sprite = gameObject->getSprite();
+    AnimationPtr anim = gameObject->getAnimation();
 
     // Actually possible to just use SpriteSetMesh(sprite, monkeyTexture[newState]), 
     // but instructions oh well.
     switch (newState)
     {
     case MonkeyIdle:
-      SpriteSetMesh(sprite, Mesh1x1);
-      SpriteSetSpriteSource(sprite, monkeySpriteSource[MonkeyIdle]);
-      AnimationPlay(anim, 1, 0.0f, false);
+		sprite->setMesh(Mesh1x1);
+		sprite->setSpriteSource(monkeySpriteSource[MonkeyIdle]);
+		anim->Play(1.0f, 0.0f, false);
       break;
     case MonkeyJump:
-      SpriteSetMesh(sprite, Mesh1x1);
-      SpriteSetSpriteSource(sprite, monkeySpriteSource[MonkeyJump]);
-      AnimationPlay(anim, 1, 0.0f, false);
+		sprite->setMesh(Mesh1x1);
+		sprite->setSpriteSource(monkeySpriteSource[MonkeyJump]);
+		anim->Play(1.0f, 0.0f, false);
       break;
     case MonkeyWalk:
-      SpriteSetMesh(sprite, mesh3x3);
-      SpriteSetSpriteSource(sprite, monkeySpriteSource[MonkeyWalk]);
-      AnimationPlay(anim, 8, 0.05f, true);
+		sprite->setMesh(mesh3x3);
+		sprite->setSpriteSource(monkeySpriteSource[MonkeyWalk]);
+		anim->Play(8.0f, 0.05f, false);
       break;
     default:
         break;
@@ -459,15 +428,15 @@ static void GameStateLevel1SetMonkeyState(GameObjectPtr gameObject, MonkeyStates
 
 void GameStateLevel1MovementController(GameObjectPtr GOptr)
 {
-  PhysicsPtr physics = GameObjectGetPhysics(GOptr);
+	PhysicsPtr physics = GOptr->getPhysics();
 
-  TransformPtr transform = GameObjectGetTransform(GOptr);
+	TransformPtr transform = GOptr->getTransform();
 
   /* If either pointers are null, return. */
   if (!physics && !transform)
     return;
 
-  Vector2D currentVelocity = *PhysicsGetVelocity(physics);
+  Vector2D currentVelocity = *physics->getVelocity();
 
   /* Left and right input. */
   if (AEInputCheckCurr(VK_LEFT))
@@ -501,11 +470,11 @@ void GameStateLevel1MovementController(GameObjectPtr GOptr)
     GameStateLevel1SetMonkeyState(GOptr, MonkeyJump);
 
     currentVelocity.y = monkeyJumpVelocity;
-    PhysicsSetAcceleration(physics, &gravityNormal);
+	physics->setAcceleration(&gravityNormal);
   }
 
   /* Check for landing. */
-  Vector2D currentTranslation = *TransformGetTranslation(transform);
+  Vector2D currentTranslation = *transform->getTranslation();
   /* If we are below the ground. */
   if (currentTranslation.y < groundHeight)
   {
@@ -513,34 +482,34 @@ void GameStateLevel1MovementController(GameObjectPtr GOptr)
     currentTranslation.y = groundHeight;
 
     /* Set the translation. */
-    TransformSetTranslation(transform, &currentTranslation);
+	transform->setTranslation(&currentTranslation);
 
     /* Turn off jump velocity. */
     currentVelocity.y = 0;
 
     /* Set physics acceleration. */
-    PhysicsSetAcceleration(physics, &gravityNone);
+	physics->setAcceleration(&gravityNone);
 
     GameStateLevel1SetMonkeyState(GOptr, MonkeyIdle);
   }
   /* Set the physics to the new velocity. */
-  PhysicsSetVelocity(physics, &currentVelocity);
+  physics->setVelocity(&currentVelocity);
 
 }
 
 static void GameStateLevel1BounceController(GameObjectPtr gameObject)
 {
-  PhysicsPtr physics = GameObjectGetPhysics(gameObject);
-  TransformPtr transform = GameObjectGetTransform(gameObject);
+	PhysicsPtr physics = gameObject->getPhysics();
+	TransformPtr transform = gameObject->getTransform();
 
-  /* If either pointers are null, return. */
-  if (!physics && !transform)
-    return;
+	/* If either pointers are null, return. */
+	if (!physics && !transform)
+		return;
 
-  Vector2D currentPos = *TransformGetTranslation(transform);
-  Vector2D currentVelocity = *PhysicsGetVelocity(physics);
+	Vector2D currentPos = *transform->getTranslation();
+	Vector2D currentVelocity = *physics->getVelocity();
 
-  // Handle x
+	// Handle x
   if (currentPos.x <= -wallDistance)
   {
     currentPos.x = -wallDistance;
@@ -559,18 +528,18 @@ static void GameStateLevel1BounceController(GameObjectPtr gameObject)
     currentPos.y = groundHeight + (groundHeight - currentPos.y);
     currentVelocity.y = -currentVelocity.y;
   }
-  TransformSetTranslation(transform, &currentPos);
-  PhysicsSetVelocity(physics, &currentVelocity);
+  transform->setTranslation(&currentPos);
+  physics->setVelocity(&currentVelocity);
 }
 
 static bool GameStateLevel1IsColliding(GameObjectPtr objectA, GameObjectPtr objectB)
 {
   // Get the pos of two objs.
-  TransformPtr transform_one = GameObjectGetTransform(objectA);
-  TransformPtr transform_two = GameObjectGetTransform(objectB);
+	TransformPtr transform_one = objectA->getTransform();
+	TransformPtr transform_two = objectB->getTransform();
 
   // If distance is below the checkdistance
-  if(Vector2DSquareDistance(TransformGetTranslation(transform_one), TransformGetTranslation(transform_two)) < CheckSquareDistance)
+  if(Vector2DSquareDistance(transform_one->getTranslation(), transform_two->getTranslation()) < CheckSquareDistance)
   {
     return true;
   }

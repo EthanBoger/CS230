@@ -10,28 +10,57 @@
 //------------------------------------------------------------------------------
 
 #pragma once
-
+#include "Behavior.h"
 //------------------------------------------------------------------------------
 // Include Files:
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 
-#ifdef __cplusplus
-extern "C" {
-	/* Assume C declarations for C++ */
-#endif
-
 //------------------------------------------------------------------------------
 // Forward References:
 //------------------------------------------------------------------------------
 
-typedef struct Behavior * BehaviorPtr;
 
 //------------------------------------------------------------------------------
 // Public Consts:
 //------------------------------------------------------------------------------
+typedef class BehaviorBullet* BehaviorBulletPtr;
 
+class BehaviorBullet : public Behavior
+{
+public:
+	BehaviorBullet(GameObjectPtr parent);
+	virtual BehaviorPtr Clone(GameObjectPtr parent);
+private:
+	// Main interface with base class.
+	virtual void Init();
+	virtual void Update(float dt);
+	virtual void Exit();
+
+	// Private const
+private:
+	static const float bulletSpeedMax;
+	// Maximum lifetime of a bullet (in seconds).
+	static const float bulletLifeTimeMax;
+
+	// Private structures
+private:
+	typedef enum BulletEnum
+	{
+		cBulletInvalid,
+		cBulletIdle
+
+	} BulletState;
+
+	// Private functions
+private:
+	void UpdateLifeTimer(float dt);
+	static void CollisionHandler(GameObjectPtr, GameObjectPtr);
+};
+const float BehaviorBullet::bulletSpeedMax = 500.0f;
+// Maximum lifetime of a bullet (in seconds).
+const float BehaviorBullet::bulletLifeTimeMax = 3.0f;
 //------------------------------------------------------------------------------
 // Public Structures:
 //------------------------------------------------------------------------------
@@ -44,33 +73,5 @@ typedef struct Behavior * BehaviorPtr;
 // Public Functions:
 //------------------------------------------------------------------------------
 
-// Dynamically allocate a new (Bullet) behavior component.
-// (Hint: Use calloc() to ensure that all member variables are initialized to 0.)
-BehaviorPtr BehaviorBulletCreate(void);
-
-// Initialize the current state of the behavior component.
-// (Hint: Refer to the lecture notes on finite state machines (FSM).)
-// Params:
-//	 behavior = Pointer to the behavior component.
-void BehaviorBulletInit(BehaviorPtr behavior);
-
-// Update the current state of the behavior component.
-// (Hint: Refer to the lecture notes on finite state machines (FSM).)
-// Params:
-//	 behavior = Pointer to the behavior component.
-//	 dt = Change in time (in seconds) since the last game loop.
-void BehaviorBulletUpdate(BehaviorPtr behavior, float dt);
-
-// Exit the current state of the behavior component.
-// (Hint: Refer to the lecture notes on finite state machines (FSM).)
-// Params:
-//	 behavior = Pointer to the behavior component.
-//	 dt = Change in time (in seconds) since the last game loop.
-void BehaviorBulletExit(BehaviorPtr behavior);
 
 //------------------------------------------------------------------------------
-
-#ifdef __cplusplus
-}                       /* End of extern "C" { */
-#endif
-

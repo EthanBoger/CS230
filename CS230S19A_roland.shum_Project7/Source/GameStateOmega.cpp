@@ -59,17 +59,17 @@ void GameStateOmegaLoad()
 void GameStateOmegaInit()
 {
 	// Add one type of each object into the archetype
-	GameObjectManagerAdd(GameObjectFactoryCreate(cGameObjectTypeArena));
+	GameObjectManagers::getInstance().Add(GameObjectFactory::Create(GameObjectFactory::cGameObjectTypeArena));
 
-	GameObjectManagerAddArchetype(GameObjectFactoryCreate(cGameObjectTypeAsteroid));
-	GameObjectManagerAddArchetype(GameObjectFactoryCreate(cGameObjectTypeBullet));
-	GameObjectManagerAddArchetype(GameObjectFactoryCreate(cGameObjectTypeHudText));
+	GameObjectManagers::getInstance().AddArchetype(GameObjectFactory::Create((GameObjectFactory::cGameObjectTypeAsteroid)));
+	GameObjectManagers::getInstance().AddArchetype(GameObjectFactory::Create((GameObjectFactory::cGameObjectTypeBullet)));
+	GameObjectManagers::getInstance().AddArchetype(GameObjectFactory::Create((GameObjectFactory::cGameObjectTypeHudText)));
 	GameStateAsteroidsCreateHudElements();
-	GameObjectPtr spaceship = (GameObjectFactoryCreate(cGameObjectTypeSpaceship));
-	GameObjectManagerAdd(spaceship);
+	GameObjectPtr spaceship = (GameObjectFactory::Create((GameObjectFactory::cGameObjectTypeSpaceship)));
+	GameObjectManagers::getInstance().Add(spaceship);
 	//Vector2D translation = { 0, -150 };
 	Vector2D translation = { 300, -150 };
-	TransformSetTranslation(GameObjectGetTransform(spaceship), &translation);
+	spaceship->getTransform()->setTranslation(&translation);
 
 	asteroidSpawnCount = cAsteroidSpawnInitial;
 
@@ -105,7 +105,7 @@ void GameStateOmegaUpdate(float dt)
 	{
 		GameStateManagerSetNextState(GsRestart);
 	}
-	if (GameObjectManagerGetObjectByName("Asteroid") == NULL)
+	if (GameObjectManagers::getInstance().GetObjectByName("Asteroid") == NULL)
 	{
 		GameStateAsteroidsSpawnAsteroidWave();
 	}
@@ -114,13 +114,13 @@ void GameStateOmegaUpdate(float dt)
 // Free any memory associated with the Omega game state.
 void GameStateOmegaShutdown()
 {
-	GameObjectManagerShutdown();
+	GameObjectManagers::getInstance().UnloadResource();
 }
 
 // Unload the resources associated with the Omega game state.
 void GameStateOmegaUnload()
 {
-	GameObjectFactoryUnloadResources();
+	GameObjectFactory::UnloadResources();
 }
 
 //------------------------------------------------------------------------------
@@ -153,7 +153,7 @@ static void GameStateAsteroidsSpawnAsteroidWave(void)
 
 static void GameStateAsteroidsSpawnAsteroid(void)
 {
-	GameObjectPtr obj = GameObjectManagerGetArchetype("Asteroid");
-	GameObjectPtr clone = GameObjectClone(obj);
-	GameObjectManagerAdd(clone);
+	GameObjectPtr obj = GameObjectManagers::getInstance().GetArchetype("Asteroid");
+	GameObjectPtr clone = new GameObject(*obj);
+	GameObjectManagers::getInstance().Add(clone);
 }

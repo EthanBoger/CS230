@@ -62,7 +62,7 @@ void EngineInit()
 	// NOTE: Other modules can be initialized later and in any order.
 	//--------------------------------------------------------------------------
 
-	GameObjectManagerInit();
+	GameObjectManagers::getInstance();
 
 	// Initialize the game state manager.
 	GameStateManagerInit();
@@ -82,9 +82,9 @@ void EngineUpdate(float dt)
 	GameStateManagerUpdate(dt);
 
 	// Update and draw the game objects.
-	GameObjectManagerUpdate(dt);
-	GameObjectManagerCheckCollisions();
-	GameObjectManagerDraw();
+	GameObjectManagers::getInstance().Update(dt);
+	GameObjectManagers::getInstance().CheckCollisions();
+	GameObjectManagers::getInstance().Draw();
 
 	// Complete the draw process for the current game loop.
 	SystemDraw();
@@ -101,7 +101,6 @@ void EngineShutdown()
 
 	// Shutdown the game state manager.
 	GameStateManagerShutdown();
-	GameObjectManagerShutdown();
 
 	//--------------------------------------------------------------------------
 	// NOTE: Certain modules need to be shutdown last and in reverse order.

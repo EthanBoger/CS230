@@ -28,7 +28,7 @@
 //------------------------------------------------------------------------------
 // Public Structures:
 //------------------------------------------------------------------------------
-typedef ColliderCircle* ColliderCirclePtr;
+typedef class ColliderCircle* ColliderCirclePtr;
 // An example of the structure to be defined in ColliderCircle.c.
 
 struct ColliderCircle : public Collider
@@ -58,6 +58,7 @@ private:
 	// Radius of the circle collider.
 	float radius;
 
+	friend class ColliderLine;
 };
 
 //------------------------------------------------------------------------------

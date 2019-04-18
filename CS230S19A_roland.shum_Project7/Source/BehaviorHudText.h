@@ -10,48 +10,39 @@
 //------------------------------------------------------------------------------
 
 #pragma once
-
+#include "Behavior.h"
 //------------------------------------------------------------------------------
 // Include Files:
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 
-#ifdef __cplusplus
-extern "C" {
-	/* Assume C declarations for C++ */
-#endif
-
 //------------------------------------------------------------------------------
 // Forward References:
 //------------------------------------------------------------------------------
-
-typedef struct Behavior * BehaviorPtr;
 
 //------------------------------------------------------------------------------
 // Public Consts:
 //------------------------------------------------------------------------------
 
 // An example of the enums to be defined in BehaviorAsteroid.c.
-#if 0
-typedef enum HudTextStates
-{
-	cHudTextInvalid = -1,	// HUD Text has not yet been initialized.
-	cHudTextIdle,			// HUD Text will normally remain static.
 
-} HudTextStates;
-#endif
 
 //------------------------------------------------------------------------------
 // Public Structures:
 //------------------------------------------------------------------------------
 
 // An example of the structure to be defined in BehaviorHudText.c.
-#if 0
-typedef struct BehaviorHudText
+
+typedef struct BehaviorHudText : public Behavior
 {
-	// Inherit the base behavior structure.
-	Behavior	base;
+private:
+	typedef enum HudTextStates
+	{
+		cHudTextInvalid = -1,	// HUD Text has not yet been initialized.
+		cHudTextIdle,			// HUD Text will normally remain static.
+
+	} HudTextStates;
 
 	// Add HUD Text-specific behavior variables.
 
@@ -74,8 +65,26 @@ typedef struct BehaviorHudText
 	// (NOTE: Make sure to update this value each time the text is updated.)
 	int displayValue;
 
+private:
+	virtual void Init();
+	virtual void Update(float dt);
+	virtual void Exit();
+
+	void UpdateText();
+
+public:
+	BehaviorHudText(GameObjectPtr parent);
+	// Set the display characteristics of the HUD Text object.
+// (NOTE: This function must be called after cloning the HUD Text archetype object.)
+// Params:
+//	 behavior = Pointer to the behavior component.
+//	 formatString = Pointer for the string used to format the display text.
+//	 watchValue = Pointer to the float value to be displayed.
+	void SetDisplay(const char * formatString, const int * watchValue);
+
+
 } BehaviorHudText, *BehaviorHudTextPtr;
-#endif
+
 
 //------------------------------------------------------------------------------
 // Public Variables:
@@ -85,41 +94,4 @@ typedef struct BehaviorHudText
 // Public Functions:
 //------------------------------------------------------------------------------
 
-// Dynamically allocate a new (Bullet) behavior component.
-// (Hint: Use calloc() to ensure that all member variables are initialized to 0.)
-BehaviorPtr BehaviorHudTextCreate(void);
-
-// Set the display characteristics of the HUD Text object.
-// (NOTE: This function must be called after cloning the HUD Text archetype object.)
-// Params:
-//	 behavior = Pointer to the behavior component.
-//	 formatString = Pointer for the string used to format the display text.
-//	 watchValue = Pointer to the float value to be displayed.
-void BehaviorHudTextSetDisplay(BehaviorPtr behavior, const char * formatString, const int * watchValue);
-
-// Initialize the current state of the behavior component.
-// (Hint: Refer to the lecture notes on finite state machines (FSM).)
-// Params:
-//	 behavior = Pointer to the behavior component.
-void BehaviorHudTextInit(BehaviorPtr behavior);
-
-// Update the current state of the behavior component.
-// (Hint: Refer to the lecture notes on finite state machines (FSM).)
-// Params:
-//	 behavior = Pointer to the behavior component.
-//	 dt = Change in time (in seconds) since the last game loop.
-void BehaviorHudTextUpdate(BehaviorPtr behavior, float dt);
-
-// Exit the current state of the behavior component.
-// (Hint: Refer to the lecture notes on finite state machines (FSM).)
-// Params:
-//	 behavior = Pointer to the behavior component.
-//	 dt = Change in time (in seconds) since the last game loop.
-void BehaviorHudTextExit(BehaviorPtr behavior);
-
 //------------------------------------------------------------------------------
-
-#ifdef __cplusplus
-}                       /* End of extern "C" { */
-#endif
-

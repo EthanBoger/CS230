@@ -23,46 +23,11 @@
 //------------------------------------------------------------------------------
 // Private Consts:
 //------------------------------------------------------------------------------
-static const float asteroidSpeedMin = 50.0f;
-static const float asteroidSpeedMax = 100.0f;
-static const float asteroidSpawnOffset = 10.0f;
+
 //------------------------------------------------------------------------------
 // Private Structures:
 //------------------------------------------------------------------------------
-typedef enum
-{
-	cAsteroidLarge,
-	cAsteroidMedium,
-	cAsteroidSmall,
 
-} AsteroidSize;
-
-typedef enum
-{
-	cAsteroidInvalid,
-	cAsteroidIdle
-} AsteroidStates;
-
-typedef enum
-{
-	cAsteroidOriginTlc,
-	cAsteroidOriginTrc,
-	cAsteroidOriginBlc,
-	cAsteroidOriginBrc,
-	cAsteroidOriginCount,
-
-} AsteroidOrigin;
-
-typedef struct BehaviorAsteroid
-{
-	// Inherit the base behavior structure.
-	Behavior	base;
-
-	// Add asteroid-specific behavior variables.
-	AsteroidSize	size;
-	AsteroidOrigin	origin;
-
-} BehaviorAsteroid, *BehaviorAsteroidPtr;
 //------------------------------------------------------------------------------
 // Public Variables:
 //------------------------------------------------------------------------------
@@ -74,9 +39,7 @@ typedef struct BehaviorAsteroid
 //------------------------------------------------------------------------------
 // Private Function Declarations:
 //------------------------------------------------------------------------------
-static void BehaviorAsteroidSetPosition(BehaviorAsteroidPtr);
-static void BehaviorAsteroidSetVelocity(BehaviorAsteroidPtr);
-static void BehaviorAsteroidCollisionHandler(GameObjectPtr, GameObjectPtr);
+
 
 //------------------------------------------------------------------------------
 // Public Functions:
@@ -84,40 +47,37 @@ static void BehaviorAsteroidCollisionHandler(GameObjectPtr, GameObjectPtr);
 
 // Dynamically allocate a new (Asteroid) behavior component.
 // (Hint: Use calloc() to ensure that all member variables are initialized to 0.)
-BehaviorPtr BehaviorAsteroidCreate(void)
+BehaviorAsteroid::BehaviorAsteroid(GameObjectPtr parent) : Behavior((int)cAsteroidInvalid,
+	(int)cAsteroidIdle, parent)
 {
-	BehaviorAsteroid* ptr = calloc(1, sizeof(BehaviorAsteroid));
-	if (ptr == NULL)
-		return NULL;
-	ptr->base.onInit = BehaviorAsteroidInit;
-	ptr->base.onUpdate = BehaviorAsteroidUpdate;
-	ptr->base.onExit = BehaviorAsteroidExit;
-	ptr->base.memorySize = sizeof(BehaviorAsteroid);
-	ptr->size = cAsteroidLarge;
-	ptr->base.stateCurr = cAsteroidInvalid;
-	ptr->base.stateNext = cAsteroidIdle;
-	return (BehaviorPtr)ptr;
+
 }
 
 // Initialize the current state of the behavior component.
 // (Hint: Refer to the lecture notes on finite state machines (FSM).)
 // Params:
 //	 behavior = Pointer to the behavior component.
-void BehaviorAsteroidInit(BehaviorPtr behavior)
+void BehaviorAsteroid::Init()
 {
-	BehaviorAsteroid* ptr = (BehaviorAsteroid*)behavior;
-	if (ptr->base.stateCurr == cAsteroidIdle)
+	if (this->stateCurr == cAsteroidIdle)
 	{
-		ptr->origin = RandomRange(0, 3);
-		BehaviorAsteroidSetPosition(ptr);
-		BehaviorAsteroidSetVelocity(ptr);
+		this->origin = static_cast<AsteroidOrigin>(RandomRange(0, 3));
+		BehaviorAsteroid::SetPosition(this);
+		BehaviorAsteroid::SetVelocity(this);
 
-		ColliderPtr collider = GameObjectGetCollider(behavior->parent);
+		ColliderPtr collider = this->parent->getCollider();
 		if (collider != NULL)
 		{
-			ColliderSetCollisionHandler(collider, BehaviorAsteroidCollisionHandler);
+			collider->SetCollisionHandler(CollisionHandler);
 		}
 	}
+}
+
+BehaviorPtr BehaviorAsteroid::Clone(GameObjectPtr parent)
+{
+	BehaviorAsteroidPtr newAsteroird = new BehaviorAsteroid(*this);
+	newAsteroird->parent = parent;
+	return newAsteroird;
 }
 
 // Update the current state of the behavior component.
@@ -125,10 +85,10 @@ void BehaviorAsteroidInit(BehaviorPtr behavior)
 // Params:
 //	 behavior = Pointer to the behavior component.
 //	 dt = Change in time (in seconds) since the last game loop.
-void BehaviorAsteroidUpdate(BehaviorPtr behavior, float dt)
+void BehaviorAsteroid::Update(float dt)
 {
 	UNREFERENCED_PARAMETER(dt);
-	switch (behavior->stateCurr)
+	switch (this->stateCurr)
 	{
 	case cAsteroidIdle:
 		
@@ -136,7 +96,7 @@ void BehaviorAsteroidUpdate(BehaviorPtr behavior, float dt)
 	default:
 		break;
 	}
-	TeleporterUpdateObject(behavior->parent);
+	TeleporterUpdateObject(this->parent);
 }
 
 // Exit the current state of the behavior component.
@@ -144,16 +104,14 @@ void BehaviorAsteroidUpdate(BehaviorPtr behavior, float dt)
 // Params:
 //	 behavior = Pointer to the behavior component.
 //	 dt = Change in time (in seconds) since the last game loop.
-void BehaviorAsteroidExit(BehaviorPtr behavior)
+void BehaviorAsteroid::Exit()
 {
-	UNREFERENCED_PARAMETER(behavior);
 }
 
 //------------------------------------------------------------------------------
 // Private Functions:
 //------------------------------------------------------------------------------
-#include "Trace.h"
-static void BehaviorAsteroidSetPosition(BehaviorAsteroidPtr obj)
+void BehaviorAsteroid::SetPosition(BehaviorAsteroidPtr obj)
 {
 	if (obj->size == cAsteroidLarge)
 	{
@@ -182,17 +140,15 @@ static void BehaviorAsteroidSetPosition(BehaviorAsteroidPtr obj)
 		default:
 			break;
 		}
-
-		TransformSetTranslation(GameObjectGetTransform(obj->base.parent), &newPosition);
+		obj->parent->getTransform()->setTranslation(&newPosition);
 	}
 }
 
-static void BehaviorAsteroidSetVelocity(BehaviorAsteroidPtr obj)
+void BehaviorAsteroid::SetVelocity(BehaviorAsteroidPtr obj)
 {
 	float newAngle = 0;
 	if (obj->size == cAsteroidLarge)
 	{
-
 		switch (obj->origin)
 		{
 			case cAsteroidOriginTlc:
@@ -217,7 +173,7 @@ static void BehaviorAsteroidSetVelocity(BehaviorAsteroidPtr obj)
 		newAngle = RandomRangeFloat(0, 359);
 	}
 	float newSpeed = RandomRangeFloat(asteroidSpeedMin, asteroidSpeedMax);
-	PhysicsPtr physics = GameObjectGetPhysics(obj->base.parent);
+	PhysicsPtr physics = obj->parent->getPhysics();
 
 	if (physics != NULL)
 	{
@@ -229,18 +185,18 @@ static void BehaviorAsteroidSetVelocity(BehaviorAsteroidPtr obj)
 		// Scale it so its speed is that.
 		Vector2DScale(&newVelocity, &newVelocity, newSpeed);
 		// Set the new velocity.
-		PhysicsSetVelocity(physics, &newVelocity);
+		physics->setVelocity(&newVelocity);
 	}
 }
 
-static void BehaviorAsteroidCollisionHandler(GameObjectPtr objA, GameObjectPtr objB)
+void BehaviorAsteroid::CollisionHandler(GameObjectPtr objA, GameObjectPtr objB)
 {
 	if (objA != NULL && objB != NULL)
 	{
-		if (GameObjectIsNamed(objB, "Spaceship") || GameObjectIsNamed(objB, "Bullet"))
+		if (objA->isNamed("Spaceship") || objB->isNamed("Bullet"))
 		{
 			ScoreSystemIncreaseScore(20);
-			GameObjectDestroy(objA);
+			objA->Destroy();
 		}
 	}
 }

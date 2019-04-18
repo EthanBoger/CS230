@@ -205,20 +205,20 @@ bool ColliderLine::LineIsCollidingWithCircle(ColliderLinePtr collider, ColliderC
 
 	// Get the translations of the colliders.
 	TransformPtr thisTransform, otherTransform;
-	thisTransform = GameObjectGetTransform(collider->parent);
-	otherTransform = GameObjectGetTransform(other->parent);
+	thisTransform = collider->parent->getTransform();
+	otherTransform = other->parent->getTransform();
 
 	// We need to access each line segment.
 	ColliderLinePtr lineCollider = (ColliderLinePtr)collider;
 
 	// Get the radius of the circle collider.
-	float radius = other->SetRadius();
+	float radius = other->GetRadius();
 
 	Vector2D collisionPoint;
 	Vector2D otherTranslation = *otherTransform->getTranslation();
 
 	// Get the velocity of my circle object.
-	Vector2D velocity = *PhysicsGetVelocity(GameObjectGetPhysics(other->parent));
+	Vector2D velocity = *other->parent->getPhysics()->getVelocity();
 
 	// Scale the velocity by DT
 	Vector2DScale(&velocity, &velocity, (float)AEFrameRateControllerGetFrameTime());
@@ -236,9 +236,9 @@ bool ColliderLine::LineIsCollidingWithCircle(ColliderLinePtr collider, ColliderC
 			// Set the circle to the new end point, and give it a new velocity.
 			otherTransform->setTranslation(&data.newEndPoint);
 
-			PhysicsPtr physics = GameObjectGetPhysics(other->parent);
+			PhysicsPtr physics = other->parent->getPhysics();
 			// Get my previous speed.
-			float speed = Vector2DLength(PhysicsGetVelocity(physics));
+			float speed = Vector2DLength(physics->getVelocity());
 
 			// Scale my unit vector of reflection to speed.
 			Vector2D newVelocity;

@@ -46,12 +46,12 @@ void TeleporterUpdateObject(GameObjectPtr gameObject)
 		return;
 
 	// Get the gameobjects transform
-	TransformPtr transform = GameObjectGetTransform(gameObject);
+	TransformPtr transform = gameObject->getTransform();
 	if (transform == NULL)
 		return;
 
 	// Get the gameobjects physics velocity
-	PhysicsPtr physics = GameObjectGetPhysics(gameObject);
+	PhysicsPtr physics = gameObject->getPhysics();
 	if (physics == NULL)
 		return;
 

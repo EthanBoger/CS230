@@ -66,12 +66,12 @@ protected:
 	//	 If 'other' is valid and the memory allocation was successful,
 	//	   then return a pointer to the cloned component,
 	//	   else return NULL.
-	virtual ColliderPtr Clone(GameObjectPtr parent) = 0;
 
 
 private:
 	static bool IsColliding(ColliderPtr collider1, ColliderPtr collider2);
 public:
+	virtual ColliderPtr Clone(GameObjectPtr parent) = 0;
 	// Set the collision event handler for a collider.
 	// (Hint: This allows other components, such as behaviors, to respond to collision events.)
 	// (Note: It is acceptable for the handler to be NULL.  This allows an existing handler to be removed.)
@@ -79,6 +79,8 @@ public:
 	//	 collider = Pointer to the collider component.
 	//	 handler = Pointer to the collision event handler (may be NULL).
 	void SetCollisionHandler(CollisionEventHandler handler);
+
+	void SetParent(GameObjectPtr parent);
 
 	// Check if two objects are colliding.
 	// (Hint: Refer to the project instructions for implementation suggestions.)

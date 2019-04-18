@@ -53,7 +53,7 @@ private:
 	const char * name;
 
 	// Flag to indicate that the game object is dead and should be destroyed.
-	bool isDestroyed;
+	bool isDestroyedp;
 
 	// Pointer to an attached animation component.
 	AnimationPtr animation;

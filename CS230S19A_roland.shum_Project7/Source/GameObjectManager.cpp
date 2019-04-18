@@ -49,9 +49,15 @@ GameObjectManager::~GameObjectManager()
 		if (objectList[i] != NULL)
 		{
 			// Destroy from active list
-			GameObjectFree(&gameObjectActiveList.objectList[i]);
+			delete objectList[i];
+			objectList[i] = NULL;
 		}
 	}
+}
+
+GameObjectManagers::~GameObjectManagers()
+{
+	UnloadResource();
 }
 
 // Update all objects in the active game objects list.
@@ -68,7 +74,7 @@ void GameObjectManagers::Update(float dt)
     if (gameObjectActiveList.objectList[i] != NULL)
     {
       // update it
-      GameObjectUpdate(gameObjectActiveList.objectList[i], dt);
+		gameObjectActiveList.objectList[i]->Update(dt);
     }
   }
 
@@ -79,10 +85,11 @@ void GameObjectManagers::Update(float dt)
     if (gameObjectActiveList.objectList[i] != NULL)
     {
       // If marked for destruction
-      if (GameObjectIsDestroyed(gameObjectActiveList.objectList[i]))
+      if (gameObjectActiveList.objectList[i]->isDestroyed())
       {
         // Free and set to NULL.
-        GameObjectFree(&gameObjectActiveList.objectList[i]);
+		  delete gameObjectActiveList.objectList[i];
+		  gameObjectActiveList.objectList[i] = NULL;
       }
     }
   }
@@ -97,7 +104,7 @@ void GameObjectManagers::Draw(void)
     if (gameObjectActiveList.objectList[i] != NULL)
     {
       // Draw it
-      GameObjectDraw(gameObjectActiveList.objectList[i]);
+		gameObjectActiveList.objectList[i]->Draw();
     }
   }
 }
@@ -161,21 +168,50 @@ void GameObjectManagers::CheckCollisions(void)
 	{
 		if (gameObjectActiveList.objectList[i] != NULL)
 		{
-			ColliderPtr collider1 = GameObjectGetCollider(gameObjectActiveList.objectList[i]);
+			ColliderPtr collider1 = gameObjectActiveList.objectList[i]->getCollider();
 			if (collider1 != NULL)
 			{
 				for (int j = 0; j < i; j++)
 				{
 					if (gameObjectActiveList.objectList[j] != NULL)
 					{
-						ColliderPtr collider2 = GameObjectGetCollider(gameObjectActiveList.objectList[j]);
+						ColliderPtr collider2 = gameObjectActiveList.objectList[j]->getCollider();
 						if (collider2 != NULL)
 						{
 							// Check fo collision.
-							ColliderCheck(collider1, collider2);
+							Collider::Check(collider1, collider2);
 						}
 					}
 				}
+			}
+		}
+	}
+}
+
+void GameObjectManagers::UnloadResource()
+{
+	// Destroy any marked GOs
+	for (int i = 0; i < gameObjectActiveList.objectMax; i++)
+	{
+		// If not null
+		if (gameObjectActiveList.objectList[i] != NULL)
+		{
+			// If marked for destruction
+			if (gameObjectActiveList.objectList[i]->isDestroyed())
+			{
+				// Free and set to NULL.
+				delete gameObjectActiveList.objectList[i];
+				gameObjectActiveList.objectList[i] = NULL;
+			}
+		}
+		if (gameObjectArchetypes.objectList[i] != NULL)
+		{
+			// If marked for destruction
+			if (gameObjectArchetypes.objectList[i]->isDestroyed())
+			{
+				// Free and set to NULL.
+				delete gameObjectArchetypes.objectList[i];
+				gameObjectArchetypes.objectList[i] = NULL;
 			}
 		}
 	}
@@ -204,7 +240,7 @@ GameObjectPtr GameObjectManagers::FindGameObjectByName(GameObjectPtr *list, cons
     if (list[i] != NULL)
     {
       // If it has the same name.
-      if (strcmp(GameObjectGetName(list[i]), name) == 0)
+      if (strcmp(list[i]->getName(), name) == 0)
       {
         // Return the ptr;
         return list[i];
