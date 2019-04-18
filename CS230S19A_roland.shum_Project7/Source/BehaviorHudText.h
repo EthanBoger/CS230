@@ -33,8 +33,9 @@
 //------------------------------------------------------------------------------
 
 // An example of the structure to be defined in BehaviorHudText.c.
+typedef struct BehaviorHudText* BehaviorHudTextPtr;
 
-typedef struct BehaviorHudText : public Behavior
+struct BehaviorHudText : public Behavior
 {
 private:
 	typedef enum HudTextStates
@@ -81,10 +82,10 @@ public:
 //	 formatString = Pointer for the string used to format the display text.
 //	 watchValue = Pointer to the float value to be displayed.
 	void SetDisplay(const char * formatString, const int * watchValue);
-	virtual BehaviorPtr Clone(GameObjectPtr parent_l);
+	virtual BehaviorHudTextPtr Clone(void) const;
 
 
-} BehaviorHudText, *BehaviorHudTextPtr;
+};
 
 
 //------------------------------------------------------------------------------

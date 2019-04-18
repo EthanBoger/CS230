@@ -41,14 +41,11 @@ BehaviorBullet::BehaviorBullet(GameObjectPtr parent) : Behavior((int)cBulletInva
 	parent)
 {
 	this->timer = bulletLifeTimeMax;
-	OnInit();
 }
 
-BehaviorPtr BehaviorBullet::Clone(GameObjectPtr parent_l)
+BehaviorBulletPtr BehaviorBullet::Clone(void) const
 {
 	BehaviorBulletPtr newbullet = new BehaviorBullet(*this);
-	newbullet->parent = parent_l;
-	OnInit();
 	return newbullet;
 }
 

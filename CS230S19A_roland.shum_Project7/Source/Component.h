@@ -13,8 +13,9 @@ public:
 		Behavior,
 		Sprite,
 		Collider,
+		Animation,
 
-		Max_Colliders
+		Max_Component_Type
 	};
 public:
 	Component() = delete;

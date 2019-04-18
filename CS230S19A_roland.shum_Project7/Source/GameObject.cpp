@@ -45,8 +45,7 @@
 //	 If the memory allocation was successful,
 //	   then return a pointer to the allocated memory,
 //	   else return NULL.
-GameObject::GameObject(const char *name) : name(name), animation(NULL), behavior(NULL),
-collider(NULL), physics(NULL), sprite(NULL), transform(NULL), isDestroyedp(0)
+GameObject::GameObject(const char *name) : name(name), components{ 0 }, isDestroyedp(0)
 {
 
 }
@@ -60,34 +59,32 @@ collider(NULL), physics(NULL), sprite(NULL), transform(NULL), isDestroyedp(0)
 //	 If 'other' is valid and the memory allocation was successful,
 //	   then return a pointer to the cloned object,
 //	   else return NULL.
-GameObject::GameObject(const GameObject &copy) :name(copy.name), animation(NULL), behavior(NULL),
-collider(NULL), physics(NULL), sprite(NULL), transform(NULL), isDestroyedp(copy.isDestroyedp)
+GameObject::GameObject(const GameObject &copy) :name(copy.name), components{ 0 }, isDestroyedp(copy.isDestroyedp)
 {
   // Clone the gameobject.
-
+	for (int i = 0; i < Component::Max_Component_Type; i++)
+	{
+		if (copy.components[i] != NULL)
+		{
+			this->components[i] = copy.components[i]->Clone();
+			this->components[i]->SetParent(this);
+		}
+	}
 	
 
-  // Clone the components and set them.
-	if(copy.behavior != NULL)
-		this->behavior = copy.behavior->Clone(this);
-	if(copy.sprite != NULL)
-		this->sprite = new Sprite(*copy.sprite);
-	if(copy.animation != NULL)
-		this->animation = new Animation(*copy.animation);
-	if(copy.physics != NULL)
-		this->physics = new Physics(*copy.physics);
-	if(copy.transform != NULL)
-		this->transform = new Transform(*copy.transform);
-	if(copy.collider != NULL)
-		this->collider = copy.collider->Clone(this);
-
-  //result->behavior = BehaviorClone(other->behavior, result);
-  //result->sprite = SpriteClone(other->sprite);
-  //result->animation = AnimationClone(other->animation, result->sprite);
-  //result->physics = PhysicsClone(other->physics);
-  //result->transform = TransformClone(other->transform);
-  //result->collider = ColliderClone(other->collider, result);
-
+ // // Clone the components and set them.
+	//if(copy.behavior != NULL)
+	//	this->behavior = copy.behavior->Clone();
+	//if(copy.sprite != NULL)
+	//	this->sprite = new Sprite(*copy.sprite);
+	//if(copy.animation != NULL)
+	//	this->animation = new Animation(*copy.animation);
+	//if(copy.physics != NULL)
+	//	this->physics = new Physics(*copy.physics);
+	//if(copy.transform != NULL)
+	//	this->transform = new Transform(*copy.transform);
+	//if(copy.collider != NULL)
+	//	this->collider = copy.collider->Clone();
 }
 
 // Flag a game object for destruction.
@@ -121,12 +118,14 @@ bool GameObject::isDestroyed()
 //	 gameObject = Pointer to the game object pointer.
 GameObject::~GameObject()
 {
-	delete this->physics;
-	delete this->sprite;
-	delete this->transform;
-	delete this->animation;
-	delete this->collider;
-	delete this->behavior;
+	for (int i = 0; i < Component::Max_Component_Type; i++)
+	{
+		if (components[i] != NULL)
+		{
+			delete this->components[i];
+			this->components[i] = NULL;
+		}
+	}
 }
 
 // Attach a physics component to a game object.
@@ -136,7 +135,7 @@ GameObject::~GameObject()
 void GameObject::addPhysics(PhysicsPtr physics)
 {
 	/* Delete the previous physics, then set. */
-	this->physics = physics;
+	addComponent(physics);
 }
 
 // Attach an animation component to a game object.
@@ -145,7 +144,7 @@ void GameObject::addPhysics(PhysicsPtr physics)
 //   animation = Pointer to the animation component to be attached.
 void GameObject::addAnimation(AnimationPtr animation)
 {
-    this->animation = animation;
+	addComponent(animation);
 }
 
 // Attach a sprite component to a game object.
@@ -154,7 +153,7 @@ void GameObject::addAnimation(AnimationPtr animation)
 //   sprite = Pointer to the sprite component to be attached.
 void GameObject::addSprite(SpritePtr sprite)
 {
-	this->sprite = sprite;
+	addComponent(sprite);
 }
 
 // Attach a transform component to a game object.
@@ -163,7 +162,7 @@ void GameObject::addSprite(SpritePtr sprite)
 //   transform = Pointer to the transform component to be attached.
 void GameObject::addTransform(TransformPtr transform)
 {
-    this->transform = transform;
+	addComponent(transform);
 }
 
 // Attach a behavior component to a game object.
@@ -172,8 +171,8 @@ void GameObject::addTransform(TransformPtr transform)
 //   behavior = Pointer to the behavior component to be attached.
 void GameObject::addBehavior(BehaviorPtr behavior)
 {
+	addComponent(behavior);
     // Set the behavior
-    this->behavior = behavior;
 	//GameObject *thisPtr(this);
 	// Set the parent
     //behavior->parent = GameObjectSPtr(thisPtr);
@@ -185,8 +184,7 @@ void GameObject::addBehavior(BehaviorPtr behavior)
 //   collider = Pointer to the collider component to be attached.
 void GameObject::addCollider(ColliderPtr collider)
 {
-	this->collider = collider;
-	collider->SetParent(this);
+	addComponent(collider);
 	//collider->parent = gameObject;
 	//gameObject->collider = collider;
 }
@@ -200,7 +198,7 @@ void GameObject::addCollider(ColliderPtr collider)
 //		else return NULL.
 PhysicsPtr GameObject::getPhysics() const
 {
-    return this->physics;
+	return dynamic_cast<PhysicsPtr>(this->components[Component::Physics]);
 }
 
 // Get the animation component attached to a game object.
@@ -212,7 +210,7 @@ PhysicsPtr GameObject::getPhysics() const
 //		else return NULL.
 AnimationPtr GameObject::getAnimation() const
 {
-	return this->animation;
+	return dynamic_cast<AnimationPtr>(this->components[Component::Animation]);
 }
 
 // Get the sprite component attached to a game object.
@@ -224,7 +222,7 @@ AnimationPtr GameObject::getAnimation() const
 //		else return NULL.
 SpritePtr GameObject::getSprite() const
 {
-	return this->sprite;
+	return dynamic_cast<SpritePtr>(this->components[Component::Sprite]);
 }
 
 // Get the transform component attached to a game object.
@@ -236,7 +234,7 @@ SpritePtr GameObject::getSprite() const
 //		else return NULL.
 TransformPtr GameObject::getTransform() const
 {
-	return this->transform;
+	return dynamic_cast<TransformPtr>(this->components[Component::Transform]);
 }
 
 // Get the collider component attached to a game object.
@@ -248,7 +246,7 @@ TransformPtr GameObject::getTransform() const
 //		else return NULL.
 ColliderPtr GameObject::getCollider() const
 {
-	return this->collider;
+	return dynamic_cast<ColliderPtr>(this->components[Component::Collider]);
 }
 
 // Get the behavior component attached to a game object.
@@ -260,7 +258,7 @@ ColliderPtr GameObject::getCollider() const
 //		else return NULL.
 BehaviorPtr GameObject::getBehavior() const
 {
-	return this->behavior;
+	return dynamic_cast<BehaviorPtr>(this->components[Component::Behavior]);
 }
 
 // Get the game object's name.
@@ -302,20 +300,13 @@ bool GameObject::isNamed(const char * name) const
 //	 dt = Change in time (in seconds) since the last game loop.
 void GameObject::Update(float dt)
 {
-    if (this->physics != NULL)
-    {
-		this->physics->Update(this->transform, dt);
-    }
-
-    if (this->animation != NULL)
-    {
-		this->animation->Update(dt);
-    }
-
-    if (this->behavior != NULL)
-    {
-		this->behavior->UpdateBehavior(dt);
-    }
+	for (int i = 0; i < Component::Max_Component_Type; i++)
+	{
+		if (this->components[i] != NULL)
+		{
+			this->components[i]->Update(dt);
+		}
+	}
 }
 
 // Draw any visible components attached to the game object.
@@ -325,9 +316,28 @@ void GameObject::Update(float dt)
 //	 gameObject = Pointer to the game object.
 void GameObject::Draw() const
 {
-  /* Check if game object is null or its sprite. */
-  if (this->sprite != NULL)
-  {
-	  sprite->Draw(this->transform);
-  }
+	for (int i = 0; i < Component::Max_Component_Type; i++)
+	{
+		if (this->components[i] != NULL)
+		{
+			this->components[i]->Draw();
+		}
+	}
+}
+
+ComponentPtr GameObject::getComponent(Component::TypeEnum type) const
+{
+	return this->components[type];
+}
+
+void GameObject::addComponent(ComponentPtr component)
+{
+	int index = component->GetComponent();
+	if (this->components[index] != NULL)
+	{
+		printf("There is something here already!\n");
+		delete components[index];
+	}
+	this->components[index] = component;
+	component->SetParent(this);
 }

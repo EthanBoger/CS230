@@ -11,6 +11,7 @@
 
 #pragma once
 #include "Vector2D.h"
+#include "Component.h"
 //------------------------------------------------------------------------------
 // Include Files:
 //------------------------------------------------------------------------------
@@ -34,7 +35,7 @@ typedef struct Transform * TransformPtr;
 typedef struct Physics * PhysicsPtr;
 
 // An example of the structure to be defined in Physics.c.
-struct Physics
+struct Physics : public Component
 {
 private:
 	// Previous position.  May be used for resolving collisions.
@@ -56,7 +57,7 @@ private:
 	// Used when resolving collision between two dynamic objects.
 	float		inverseMass;
 public:
-	Physics() = default;
+	Physics();
 	Physics(const Physics& other) = default;
 	~Physics() = default;
 
@@ -70,7 +71,10 @@ public:
 	void setRotationalVelocity(float rotationalVelocity);
 	void setDrag(float drag);
 
-	void Update(TransformPtr transform, float dt);
+	void Update(float dt) override;
+	void Draw() override;
+	PhysicsPtr Clone(void) const;
+
 };
 
 //------------------------------------------------------------------------------

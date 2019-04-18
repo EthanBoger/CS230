@@ -44,14 +44,12 @@
 BehaviorHudText::BehaviorHudText(GameObjectPtr parent) : Behavior((int)cHudTextInvalid,
 	(int)cHudTextIdle, parent), watchValue(NULL)
 {
-	OnInit();
+
 }
 
-BehaviorPtr BehaviorHudText::Clone(GameObjectPtr parent_l)
+BehaviorHudTextPtr BehaviorHudText::Clone(void) const
 {
 	BehaviorHudTextPtr newAsteroird = new BehaviorHudText(*this);
-	newAsteroird->parent = parent_l;
-	OnInit();
 	return newAsteroird;
 }
 

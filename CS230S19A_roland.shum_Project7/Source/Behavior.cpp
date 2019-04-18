@@ -72,7 +72,7 @@ void Behavior::Update(float dt)
   }
 
   // Run the update function if it has one
-  this->Update(dt);
+  this->OnUpdate(dt);
 
 }
 

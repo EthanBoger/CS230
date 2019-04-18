@@ -40,7 +40,7 @@ typedef enum
 	GsLast = GsNum - 1,
 
 	/* Specify the initial game state */
-	GsInitial = GsOmega,
+	GsInitial = GsLevel1,
 
 } GameStates;
 

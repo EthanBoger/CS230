@@ -76,12 +76,12 @@ public:
 	//	 If 'other' is valid and the memory allocation was successful,
 	//	   then return a pointer to the cloned component,
 	//	   else return NULL.
-	virtual BehaviorPtr Clone(GameObjectPtr parent) = 0;
+	// virtual BehaviorPtr Clone(GameObjectPtr parent = NULL) const = 0;
 	Behavior(const Behavior& other) = default;
 	Behavior(int curr, int next, GameObjectPtr parent);
 	virtual ~Behavior();
 
-	virtual void Draw();
+	void Draw() override;
 
 	// Update the behavior component.
 	// (Hint: Refer to the Word document for detailed instructions regarding this function.)

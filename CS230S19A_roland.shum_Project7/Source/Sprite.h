@@ -10,7 +10,7 @@
 //------------------------------------------------------------------------------
 
 #pragma once
-
+#include "Component.h"
 //------------------------------------------------------------------------------
 // Include Files:
 //------------------------------------------------------------------------------
@@ -37,7 +37,7 @@ typedef struct Transform * TransformPtr;
 
 // You are free to change the contents of this structure as long as you do not
 //   change the public interface declared in the header.
-struct Sprite
+struct Sprite : Component
 {
 private:
 	// The name of the sprite.
@@ -60,7 +60,7 @@ private:
 
 public:
 	Sprite(const char * name);
-	Sprite(const Sprite& other);
+	Sprite(const Sprite& other) = default;
 	~Sprite() = default;
 
 	void setAlpha(float newAlpha);
@@ -71,7 +71,9 @@ public:
 	void setSpriteSource(SpriteSourcePtr spriteSource);
 	void setText(const char * text);
 
-	void Draw(TransformPtr transform);
+	void Draw() override;
+	void Update(float dt) override;
+	SpritePtr Clone(void) const;
 };
 
 

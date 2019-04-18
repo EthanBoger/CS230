@@ -14,7 +14,7 @@
 //------------------------------------------------------------------------------
 // Include Files:
 //------------------------------------------------------------------------------
-
+#include "Component.h"
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -35,12 +35,9 @@ typedef struct Sprite * SpritePtr;
 
 // You are free to change the contents of this structure as long as you do not
 //   change the public interface declared in the header.
-struct Animation
+struct Animation : public Component
 {
 private:
-	// Pointer to the sprite associated with the animation.
-	SpritePtr sprite;
-
 	// The current frame being displayed.
 	unsigned int frameIndex;
 
@@ -65,13 +62,16 @@ private:
 	bool isDone;
 	
 public:
-	Animation(SpritePtr sprite);
-	Animation(AnimationPtr orig, SpritePtr sprite);
+	Animation();
+	Animation(const Animation &orig) = default;
 	~Animation();
 
 	bool IsDone() const;
 
-	void Update(float dt);
+	void Update(float dt) override;
+	void Draw() override;
+	AnimationPtr Clone(void) const override;
+
 	void Play(int frameCount, float frameDuration, bool isLooping);
 private:
 	void advanceFrames(float dt);

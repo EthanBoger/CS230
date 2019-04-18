@@ -53,7 +53,7 @@ public:
 
 	static bool CircleIsCollidingWithCircle(ColliderCirclePtr collider, ColliderCirclePtr other);
 
-	virtual ColliderPtr Clone(GameObjectPtr parent);
+	virtual ColliderCirclePtr Clone(void) const;
 private:
 	// Radius of the circle collider.
 	float radius;
