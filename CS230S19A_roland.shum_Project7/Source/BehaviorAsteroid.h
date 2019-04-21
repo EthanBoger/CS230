@@ -74,7 +74,7 @@ private:
 
 public:
 	BehaviorAsteroid(GameObjectPtr parent);
-	virtual BehaviorPtr Clone(GameObjectPtr parent);
+	virtual BehaviorAsteroidPtr Clone() const;
 
 private:
 	virtual void OnInit();

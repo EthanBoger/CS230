@@ -61,8 +61,7 @@ private:
 	static bool IsColliding(ColliderPtr collider1, ColliderPtr collider2);
 public:
 	virtual ~Collider() = default;
-	virtual ColliderPtr Clone(GameObjectPtr parent) = 0;
-	virtual ColliderPtr Clone(void) const override;
+	virtual ColliderPtr Clone(void) const = 0;
 
 	virtual void Update(float dt) override;
 	virtual void Draw() override;

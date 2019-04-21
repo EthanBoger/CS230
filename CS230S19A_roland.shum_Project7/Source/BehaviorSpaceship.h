@@ -33,7 +33,7 @@ class Spaceship : public Behavior
 {
 public:
 	Spaceship(GameObjectPtr parent);
-	virtual BehaviorPtr Clone(GameObjectPtr parent);
+	virtual SpaceshipPtr Clone(void) const;
 private:
 	// Main interface with base class.
 	virtual void OnInit();

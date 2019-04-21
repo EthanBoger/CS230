@@ -50,7 +50,7 @@ typedef struct Transform * TransformPtr;
 //	 If the memory allocation was successful,
 //	   then return a pointer to the allocated memory,
 //	   else return NULL.
-Transform::Transform(float x, float y)
+Transform::Transform(float x, float y) : Component(Component::Transform, NULL)
 {
   /* Set values */
   Vector2DSet(&this->translation, x, y);
@@ -59,6 +59,21 @@ Transform::Transform(float x, float y)
   this->rotation = 0;
   this->isDirty = true;
   Matrix2DIdentity(&this->matrix);
+}
+
+TransformPtr Transform::Clone(void) const
+{
+	return new Transform(*this);
+}
+
+void Transform::Update(float dt)
+{
+
+}
+
+void Transform::Draw()
+{
+
 }
 
 // Get the transform matrix, based upon translation, rotation and scale settings.

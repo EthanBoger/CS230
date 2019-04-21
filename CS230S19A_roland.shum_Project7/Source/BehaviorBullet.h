@@ -31,7 +31,7 @@ class BehaviorBullet : public Behavior
 {
 public:
 	BehaviorBullet(GameObjectPtr parent);
-	virtual BehaviorPtr Clone(GameObjectPtr parent);
+	virtual BehaviorBulletPtr Clone(void) const;
 private:
 	// Main interface with base class.
 	virtual void OnInit();

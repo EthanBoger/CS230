@@ -41,6 +41,7 @@ typedef struct GameObject GameObject;
 typedef std::unique_ptr<GameObject *> GameObjectUPtr;
 typedef std::shared_ptr<GameObject *> GameObjectSPtr;
 typedef GameObject* GameObjectPtr;
+typedef class Component* ComponentPtr;
 
 // An example of the structure to be defined in GameObject.c.
 
@@ -55,23 +56,26 @@ private:
 	// Flag to indicate that the game object is dead and should be destroyed.
 	bool isDestroyedp;
 
-	// Pointer to an attached animation component.
-	AnimationPtr animation;
+	// Array of compnents.
+	ComponentPtr components[Component::Max_Component_Type];
 
-	// Pointer to an attached behavior component.
-	BehaviorPtr behavior;
+	//// Pointer to an attached animation component.
+	//AnimationPtr animation;
 
-	// Pointer to an attached collider component.
-	ColliderPtr collider;
+	//// Pointer to an attached behavior component.
+	//BehaviorPtr behavior;
 
-	// Pointer to an attached physics component.
-	PhysicsPtr physics;
+	//// Pointer to an attached collider component.
+	//ColliderPtr collider;
 
-	// Pointer to an attached sprite component.
-	SpritePtr sprite;
+	//// Pointer to an attached physics component.
+	//PhysicsPtr physics;
 
-	// Pointer to an attached transform component.
-	TransformPtr transform;
+	//// Pointer to an attached sprite component.
+	//SpritePtr sprite;
+
+	//// Pointer to an attached transform component.
+	//TransformPtr transform;
 
 public:
 	GameObject(const char *name);
@@ -94,6 +98,9 @@ public:
 	BehaviorPtr getBehavior() const;
 	ColliderPtr getCollider() const;
 	SpritePtr getSprite() const;
+
+	ComponentPtr getComponent(Component::TypeEnum type) const;
+	void addComponent(ComponentPtr component);
 
 	const char * getName() const;
 	bool isNamed(const char *name) const;

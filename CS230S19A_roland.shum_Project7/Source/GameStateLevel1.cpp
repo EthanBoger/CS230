@@ -358,7 +358,7 @@ static GameObjectPtr GameStateLevel1CreateMonkey(void)
   sprite->setMesh(mesh3x3);
   sprite->setSpriteSource(monkeySpriteSource[MonkeyIdle]);
 
-  AnimationPtr anim = new Animation(sprite);
+  AnimationPtr anim = new Animation();
   PhysicsPtr physics = new Physics();
 
   newObj->addAnimation(anim);

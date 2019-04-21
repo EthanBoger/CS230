@@ -19,6 +19,7 @@
 #include "SpriteSource.h"
 #include "Mesh.h"
 #include "Matrix2D.h"
+#include "GameObject.h"
 //------------------------------------------------------------------------------
 // Include Files:
 //------------------------------------------------------------------------------
@@ -52,33 +53,25 @@
 //	 If the memory allocation was successful,
 //	   then return a pointer to the allocated memory,
 //	   else return NULL.
-Sprite::Sprite(const char * name) : alpha(1.0f), frameIndex(0), mesh(NULL),
+Sprite::Sprite(const char * name) : Component(Component::Sprite, NULL), alpha(1.0f), frameIndex(0), mesh(NULL),
 	name(name), spriteSource(NULL), text(NULL)
 {
 }
 
-// Dynamically allocate a clone of an existing sprite.
-// (Hint: Perform a shallow copy of the member variables.)
-// Params:
-//	 other = Pointer to the component to be cloned.
-// Returns:
-//	 If 'other' is valid and the memory allocation was successful,
-//	   then return a pointer to the cloned component,
-//	   else return NULL.
-Sprite::Sprite(const Sprite& other)
+SpritePtr Sprite::Clone(void) const
 {
-  // shallow copy
-  *this = other;
+	return new Sprite(*this);
 }
 
 // Draw a sprite (Sprite can be textured or untextured).
 // Params:
 //	 sprite = Pointer to the sprite object.
 //   transform = Pointer to the sprite object's transform.
-void Sprite::Draw(TransformPtr transform)
+void Sprite::Draw()
 {
   if (this->mesh == NULL)
     return;
+  TransformPtr transform = this->parent->getTransform();
 
   /* If the this has a source, */
   if (this->spriteSource != NULL)
@@ -125,6 +118,11 @@ void Sprite::Draw(TransformPtr transform)
       Matrix2DConcat(&transformMtx, &offset, &transformMtx);
     }
   }
+}
+
+void Sprite::Update(float dt)
+{
+
 }
 
 // Get a sprite's alpha value.

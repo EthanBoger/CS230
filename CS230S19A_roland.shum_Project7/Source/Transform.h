@@ -16,6 +16,7 @@
 //------------------------------------------------------------------------------
 #include "Matrix2D.h"
 #include "Vector2D.h"
+#include "Component.h"
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -34,7 +35,7 @@ typedef struct Transform * TransformPtr;
 
 // You are free to change the contents of this structure as long as you do not
 //   change the public interface declared in the header.
-struct Transform
+struct Transform : public Component
 {
 private:
 	// The translation (or world position) of a game object.
@@ -67,6 +68,10 @@ public:
 	void setTranslation(const Vector2D * translation);
 	void setRotation(const float rotation);
 	void setScale(const Vector2D * scale);
+
+	virtual TransformPtr Clone(void) const;
+	virtual void Update(float dt);
+	virtual void Draw();
 };
 
 //------------------------------------------------------------------------------

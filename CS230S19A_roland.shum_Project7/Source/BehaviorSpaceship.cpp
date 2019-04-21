@@ -55,14 +55,11 @@ const float Spaceship::spaceshipDeathDuration = 3.0f;
 
 Spaceship::Spaceship(GameObjectPtr parent) : Behavior((int)cSpaceshipInvalid, (int)cSpaceshipIdle, parent)
 {
-	OnInit();
 }
 
-BehaviorPtr Spaceship::Clone(GameObjectPtr parent_l)
+SpaceshipPtr Spaceship::Clone(void) const
 {
 	SpaceshipPtr newAsteroird = new Spaceship(*this);
-	newAsteroird->parent = parent_l;
-	OnInit();
 	return newAsteroird;
 }
 

@@ -70,7 +70,7 @@ public:
 	static bool PointLineIntersection(Vector2D const *circlePosition, Vector2D const *velocity,
 		ColliderLineSegment const *segment, float radius, Vector2D *point);
 
-	virtual ColliderPtr Clone(GameObjectPtr parent);
+	virtual ColliderLinePtr Clone(void) const;
 
 	static bool LineIsCollidingWithCircle(ColliderLinePtr collider, ColliderCirclePtr other);
 

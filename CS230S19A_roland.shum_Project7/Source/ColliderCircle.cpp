@@ -106,10 +106,9 @@ bool ColliderCircle::CircleIsCollidingWithCircle(ColliderCirclePtr collider, Col
 	return false;
 }
 
-ColliderPtr ColliderCircle::Clone(GameObjectPtr parent)
+ColliderCirclePtr ColliderCircle::Clone(void) const
 {
 	ColliderCirclePtr newLine = new ColliderCircle(*this);
-	newLine->parent = parent;
 	return newLine;
 }
 

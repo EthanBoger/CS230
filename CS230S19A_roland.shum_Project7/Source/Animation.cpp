@@ -17,6 +17,7 @@
 #include "Animation.h"
 #include <assert.h>
 #include "Sprite.h"
+#include "GameObject.h"
 //------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
@@ -46,26 +47,19 @@ typedef struct Sprite * SpritePtr;
 // (Hint: Use calloc() to ensure that all member variables are initialized to 0.)
 // Params:
 //	 sprite = Pointer to the sprite object associated with the animation.
-Animation::Animation(SpritePtr sprite) : sprite(sprite)
+Animation::Animation() : Component(Component::Animation, NULL)
 {
 
 }
 
-// Dynamically allocate a clone of an existing animation.
-// (Hint: Perform a shallow copy of the member variables, then change the 'sprite' pointer.)
-// Params:
-//	 other = Pointer to the component to be cloned.
-// Returns:
-//	 If 'other' is valid and the memory allocation was successful,
-//	   then return a pointer to the cloned component,
-//	   else return NULL.
-Animation::Animation(AnimationPtr orig, SpritePtr sprite)
+void Animation::Draw()
 {
-  // Shallow copy
-  *this = *orig;
 
-  // Point to new sprite.
-  this->sprite = sprite;
+}
+
+AnimationPtr Animation::Clone(void) const
+{
+	return new Animation(*this);
 }
 
 // Free the memory associated with an animation.
@@ -92,7 +86,7 @@ void Animation::Play(int frameCount_l, float frameDuration_l, bool isLooping_l)
   this->isRunning = true;
   this->isDone = false;
 
-  sprite->setFrame(0);
+  parent->getSprite()->setFrame(0);
 }
 
 // Play a complex animation sequence (any frame/any delay).
@@ -160,7 +154,7 @@ void Animation::advanceFrames(float dt)
   if (this->isRunning)
   {
     // Update Sprite frame
-    sprite->setFrame(this->frameIndex);
+	  parent->getSprite()->setFrame(this->frameIndex);
     this->frameDelay += this->frameDuration;
   }
   else

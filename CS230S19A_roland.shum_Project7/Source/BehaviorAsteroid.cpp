@@ -52,7 +52,6 @@ const float BehaviorAsteroid::asteroidSpawnOffset = 10.0f;
 BehaviorAsteroid::BehaviorAsteroid(GameObjectPtr parent) : Behavior((int)cAsteroidInvalid,
 	(int)cAsteroidIdle, parent), size(cAsteroidLarge)
 {
-	OnInit();
 }
 
 // Initialize the current state of the behavior component.
@@ -75,11 +74,9 @@ void BehaviorAsteroid::OnInit()
 	}
 }
 
-BehaviorPtr BehaviorAsteroid::Clone(GameObjectPtr parent_l)
+BehaviorAsteroidPtr BehaviorAsteroid::Clone(void) const
 {
 	BehaviorAsteroidPtr newAsteroird = new BehaviorAsteroid(*this);
-	newAsteroird->parent = parent_l;
-	OnInit();
 	return newAsteroird;
 }
 

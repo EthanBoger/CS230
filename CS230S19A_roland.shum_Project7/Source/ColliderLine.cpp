@@ -53,10 +53,9 @@ ColliderLine::ColliderLine() : Collider(ColliderTypeLine)
 
 }
 
-ColliderPtr ColliderLine::Clone(GameObjectPtr parent)
+ColliderLinePtr ColliderLine::Clone(void) const
 {
 	ColliderLinePtr newLine = new ColliderLine(*this); 
-	newLine->parent = parent;
 	return newLine;
 }
 
